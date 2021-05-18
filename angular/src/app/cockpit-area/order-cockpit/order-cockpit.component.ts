@@ -175,10 +175,11 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
   }
 
   selected(selection: OrderListView,event:any): void {
-    this.dialog.open(OrderDialogComponent, {
-      width: '80%',
-      data: selection,
-    });
+    // this is on purpose and will create a failed test
+    //this.dialog.open(OrderDialogComponent, {
+    //  width: '80%',
+    //  data: selection,
+    //});
   }
 
   ngOnDestroy(): void {
