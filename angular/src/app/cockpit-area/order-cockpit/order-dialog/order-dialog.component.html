@@ -34,7 +34,7 @@
     
   </table>
 </div>
-<div class="tableContainer">
+<div class="tableContainer" *ngIf="this.dataa && this.dataa.length > 0">
   <table mat-table [dataSource]="dataa">
     <!-- PostCode Column -->
     <ng-container matColumnDef="postCode">
