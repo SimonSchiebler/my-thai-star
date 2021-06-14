@@ -271,6 +271,7 @@ const OrderStateHandler = {
     const email = await client.getProfileEmail();
 
     const orders = await util.getActiveOrders(email);
+    console.log(orders);
 
     var i;
     let res = "you currently have " + orders.orders.length + " open orders. \n";
