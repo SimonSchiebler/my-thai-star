@@ -296,7 +296,7 @@ public class OrdermanagementImpl extends AbstractComponentFacade implements Orde
     // initialize, validate orderEntity here if necessary
     orderEntity = getValidatedOrder(orderEntity.getBooking().getBookingToken(), orderEntity);
     orderEntity.setOrderLines(orderLineEntities);
-
+    orderEntity.setPaidId(0l);
     if (order.getAddress() != null) {
       AddressEntity address = new AddressEntity();
       address.setCity(order.getAddress().getCity());

@@ -44,7 +44,7 @@ const LaunchRequestHandler = {
   },
   async handle(handlerInput) {
     const speakOutput =
-      "Welcome to My Thai Star. You can say order food or reserve a table to me.";
+      "Welcome to My Thai Star. If you want to know what i can do for you please say Help";
     return handlerInput.responseBuilder
       .speak(speakOutput)
       .reprompt(speakOutput)
@@ -100,13 +100,7 @@ const ReserveIntentHandler = {
 
       const combinedDate = date + "T" + time + ":00";
 
-      util.createReservation(
-        name,
-        email,
-        combinedDate,
-        assistants,
-        false
-      );
+      util.createReservation(name, email, combinedDate, assistants, false);
       return handlerInput.responseBuilder
         .speak(
           messages.RESERVED_TABLE + email + " for " + date + " at " + time + "."
@@ -192,23 +186,20 @@ const OrderIntentHandler = {
     const dish = sessionAttributes.dish;
     const oneMoreOrder = sessionAttributes.oneMoreOrder;
 
-      const client = handlerInput.serviceClientFactory.getUpsServiceClient();
-      const email = await client.getProfileEmail();
-      const name = await client.getProfileName();
-      const { deviceId } = handlerInput.requestEnvelope.context.System.device;
-      const deviceAddressServiceClient =
-        handlerInput.serviceClientFactory.getDeviceAddressServiceClient();
-      const address = await deviceAddressServiceClient.getFullAddress(deviceId);
-      console.log(address);
+    const client = handlerInput.serviceClientFactory.getUpsServiceClient();
+    const email = await client.getProfileEmail();
+    const name = await client.getProfileName();
+    const { deviceId } = handlerInput.requestEnvelope.context.System.device;
+    const deviceAddressServiceClient =
+      handlerInput.serviceClientFactory.getDeviceAddressServiceClient();
+    const address = await deviceAddressServiceClient.getFullAddress(deviceId);
 
     handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
     if (oneMoreOrder == "no" && sessionAttributes.wantsToOrder === undefined) {
       util.createDelivery(name, email, sessionAttributes.orderlist, address);
       return handlerInput.responseBuilder
-        .speak(
-          "Your delivery has been placed. Thank you for you ordering from us."
-        )
+        .speak("Your delivery has been placed. Thank you for ordering from us.")
         .getResponse();
     } else if (
       oneMoreOrder == "no" &&
@@ -267,6 +258,52 @@ const OrderIntentHandler = {
   },
 };
 
+const OrderStateHandler = {
+  canHandle(handlerInput) {
+    return (
+      Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+      Alexa.getIntentName(handlerInput.requestEnvelope) === "OrderStateIntent"
+    );
+  },
+  async handle(handlerInput) {
+
+    const client = handlerInput.serviceClientFactory.getUpsServiceClient();
+    const email = await client.getProfileEmail();
+
+    const orders = await util.getActiveOrders(email);
+
+    var i;
+    let res = "you currently have " + orders.orders.length + " open orders. \n";
+
+    for (i = 0; i < orders.orders.length; i++) {
+      let state;
+      switch (orders.orders[i].stateId) {
+        case 0:
+          state = "ordered";
+          break;
+        case 1:
+          state = "preperation";
+          break;
+        case 2:
+          state = "delivery";
+          break;
+        default:
+          break;
+      }
+      if (orders.orders.length === 1){
+        res += "\n" + "Your order is currently in the state: " + state;
+      } else {
+        res += "\n" + "your " + (i + 1) + "th order is currently in the state: " + state + ".";
+      }
+    }
+    
+
+    return handlerInput.responseBuilder
+      .speak(res)
+      .getResponse();
+  },
+};
+
 const HelpIntentHandler = {
   canHandle(handlerInput) {
     return (
@@ -275,7 +312,7 @@ const HelpIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const speakOutput = "You can say hello to me! How can I help?";
+    const speakOutput = "I currently have following commands: order food, reserve a table and whats the state of my order";
 
     return handlerInput.responseBuilder
       .speak(speakOutput)
@@ -324,7 +361,7 @@ const IntentReflectorHandler = {
   async handle(handlerInput) {
     const intentName = Alexa.getIntentName(handlerInput.requestEnvelope);
     const speakOutput = `You just triggered ${intentName}`;
-
+    
     return (
       handlerInput.responseBuilder
         .speak(speakOutput)
@@ -378,6 +415,7 @@ exports.handler = Alexa.SkillBuilders.custom()
     LaunchRequestHandler,
     ReserveIntentHandler,
     OrderIntentHandler,
+    OrderStateHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler,
