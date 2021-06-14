@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.springframework.data.domain.Page;
 
-import com.devonfw.application.mtsj.ordermanagement.common.api.to.ActiveOrdersWithDateCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderEto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderLineCto;
@@ -20,6 +19,7 @@ import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderLineSearc
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderSearchCriteriaTo;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderedDishesCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderedDishesSearchCriteriaTo;
+import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrdersCto;
 import com.devonfw.application.mtsj.ordermanagement.logic.api.Ordermanagement;
 
 /**
@@ -87,7 +87,7 @@ public interface OrdermanagementRestService {
    */
   @Path("/order/activeOrders")
   @POST
-  public ActiveOrdersWithDateCto getActiveOrders(OrderSearchCriteriaTo email);
+  public OrdersCto getActiveOrders(OrderSearchCriteriaTo email);
 
   /**
    * @param pay state of {@link OrderEto} to be updated

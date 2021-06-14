@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import com.devonfw.application.mtsj.ordermanagement.common.api.to.ActiveOrdersWithDateCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderEto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderLineCto;
@@ -14,6 +13,7 @@ import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderLineSearc
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderSearchCriteriaTo;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderedDishesCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderedDishesSearchCriteriaTo;
+import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrdersCto;
 
 /**
  * Interface for Ordermanagement component.
@@ -145,7 +145,7 @@ public interface Ordermanagement {
 	 * @param email
 	 * @return OrderCto
 	 */
-	public ActiveOrdersWithDateCto findActiveOrders(OrderSearchCriteriaTo email);
+	public OrdersCto findActiveOrders(OrderSearchCriteriaTo email);
 
 	String buildToken(String email, String type) throws NoSuchAlgorithmException;
 

@@ -44,7 +44,6 @@ import com.devonfw.application.mtsj.ordermanagement.common.api.exception.NoBooki
 import com.devonfw.application.mtsj.ordermanagement.common.api.exception.NoInviteException;
 import com.devonfw.application.mtsj.ordermanagement.common.api.exception.OrderAlreadyExistException;
 import com.devonfw.application.mtsj.ordermanagement.common.api.exception.WrongTokenException;
-import com.devonfw.application.mtsj.ordermanagement.common.api.to.ActiveOrdersWithDateCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.AddressEto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderEto;
@@ -56,7 +55,8 @@ import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderStateEto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderedDishesCto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderedDishesEto;
 import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderedDishesSearchCriteriaTo;
-import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrdersEto;
+import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrdersCto;
+import com.devonfw.application.mtsj.ordermanagement.dataaccess.api.AddressEntity;
 import com.devonfw.application.mtsj.ordermanagement.dataaccess.api.OrderEntity;
 import com.devonfw.application.mtsj.ordermanagement.dataaccess.api.OrderLineEntity;
 import com.devonfw.application.mtsj.ordermanagement.dataaccess.api.OrderPaidEntity;
@@ -79,350 +79,346 @@ import com.devonfw.application.mtsj.ordermanagement.logic.api.Ordermanagement;
 @Transactional
 public class OrdermanagementImpl extends AbstractComponentFacade implements Ordermanagement {
 
-	/**
-	 * Logger instance.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(OrdermanagementImpl.class);
+  /**
+   * Logger instance.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(OrdermanagementImpl.class);
 
-	/**
-	 * @see #getOrderDao()
-	 */
-	@Inject
-	private OrderRepository orderDao;
+  /**
+   * @see #getOrderDao()
+   */
+  @Inject
+  private OrderRepository orderDao;
 
-	/**
-	 * @see #getOrderLineDao()
-	 */
-	@Inject
-	private OrderLineRepository orderLineDao;
+  /**
+   * @see #getOrderLineDao()
+   */
+  @Inject
+  private OrderLineRepository orderLineDao;
 
-	/**
-	 * @see #getOrderStateDao()
-	 */
-	@Inject
-	private OrderStateRepository orderStateDao;
+  /**
+   * @see #getAddressDao()
+   */
+  @Inject
+  private AddressRepository addressDao;
 
-	@Inject
-	private OrderPayStateRepository orderPayStateDao;
+  /**
+   * @see #getOrderStateDao()
+   */
+  @Inject
+  private OrderStateRepository orderStateDao;
 
-	@Inject
-	private OrderedDishesPerDayRepository orderedDishesPerDayDao;
+  @Inject
+  private OrderPayStateRepository orderPayStateDao;
 
-	@Inject
-	private OrderedDishesPerMonthRepository orderedDishesPerMonthDao;
+  @Inject
+  private OrderedDishesPerDayRepository orderedDishesPerDayDao;
 
-	@Inject
-	private Bookingmanagement bookingManagement;
+  @Inject
+  private OrderedDishesPerMonthRepository orderedDishesPerMonthDao;
 
-	@Inject
-	private Dishmanagement dishManagement;
+  @Inject
+  private Bookingmanagement bookingManagement;
 
-	@Inject
-	private Mail mailService;
+  @Inject
+  private Dishmanagement dishManagement;
 
-	@Value("${client.port}")
-	private int clientPort;
+  @Inject
+  private Mail mailService;
 
-	@Value("${server.servlet.context-path}")
-	private String serverContextPath;
+  @Value("${client.port}")
+  private int clientPort;
 
-	@Value("${mythaistar.hourslimitcancellation}")
-	private int hoursLimit;
+  @Value("${server.servlet.context-path}")
+  private String serverContextPath;
 
-	/**
-	 * The constructor.
-	 */
-	public OrdermanagementImpl() {
+  @Value("${mythaistar.hourslimitcancellation}")
+  private int hoursLimit;
 
-		super();
-	}
+  /**
+   * The constructor.
+   */
+  public OrdermanagementImpl() {
 
-	@Override
-	public OrderCto findOrder(String id) {
+    super();
+  }
 
-		LOG.debug("Get Order with id " + id + " from database.");
-		List<OrderEntity> entityList = getOrderDao().findOrderByOrderToken(id);
-		OrderEntity order = entityList.get(0);
-		OrderCto cto = new OrderCto();
-		cto.setBooking(getBeanMapper().map(order.getBooking(), BookingEto.class));
-		cto.setHost(getBeanMapper().map(order.getHost(), BookingEto.class));
-		cto.setAddress(getBeanMapper().map(order.getAddress(), AddressEto.class));
-		cto.setInvitedGuest(getBeanMapper().map(order.getInvitedGuest(), InvitedGuestEto.class));
-		cto.setOrder(getBeanMapper().map(order, OrderEto.class));
-		cto.setOrderLines(getBeanMapper().mapList(order.getOrderLines(), OrderLineCto.class));
-		List<OrderLineCto> orderLinesCto = new ArrayList<>();
-		for (OrderLineEntity orderLine : order.getOrderLines()) {
-			OrderLineCto orderLineCto = new OrderLineCto();
-			orderLineCto.setDish(getBeanMapper().map(orderLine.getDish(), DishEto.class));
-			orderLineCto.setExtras(getBeanMapper().mapList(orderLine.getExtras(), IngredientEto.class));
-			orderLineCto.setOrderLine(getBeanMapper().map(orderLine, OrderLineEto.class));
-			orderLinesCto.add(orderLineCto);
-		}
-		cto.setOrderLines(orderLinesCto);
-		cto.setState(getBeanMapper().map(order.getState(), OrderStateEto.class));
-		return cto;
-	}
+  @Override
+  public OrderCto findOrder(String id) {
 
-	@Override
-	@RolesAllowed(ApplicationAccessControlConfig.PERMISSION_FIND_ORDER)
-	public Page<OrderCto> findOrdersByPost(OrderSearchCriteriaTo criteria) {
+    LOG.debug("Get Order with id " + id + " from database.");
+    List<OrderEntity> entityList = getOrderDao().findOrderByOrderToken(id);
+    OrderEntity order = entityList.get(0);
+    OrderCto cto = new OrderCto();
+    cto.setBooking(getBeanMapper().map(order.getBooking(), BookingEto.class));
+    cto.setHost(getBeanMapper().map(order.getHost(), BookingEto.class));
+    cto.setAddress(getBeanMapper().map(order.getAddress(), AddressEto.class));
+    cto.setInvitedGuest(getBeanMapper().map(order.getInvitedGuest(), InvitedGuestEto.class));
+    cto.setOrder(getBeanMapper().map(order, OrderEto.class));
+    cto.setOrderLines(getBeanMapper().mapList(order.getOrderLines(), OrderLineCto.class));
+    List<OrderLineCto> orderLinesCto = new ArrayList<>();
+    for (OrderLineEntity orderLine : order.getOrderLines()) {
+      OrderLineCto orderLineCto = new OrderLineCto();
+      orderLineCto.setDish(getBeanMapper().map(orderLine.getDish(), DishEto.class));
+      orderLineCto.setExtras(getBeanMapper().mapList(orderLine.getExtras(), IngredientEto.class));
+      orderLineCto.setOrderLine(getBeanMapper().map(orderLine, OrderLineEto.class));
+      orderLinesCto.add(orderLineCto);
+    }
+    cto.setOrderLines(orderLinesCto);
+    cto.setState(getBeanMapper().map(order.getState(), OrderStateEto.class));
+    return cto;
+  }
 
-		return findOrderCtos(criteria);
-	}
+  @Override
+  @RolesAllowed(ApplicationAccessControlConfig.PERMISSION_FIND_ORDER)
+  public Page<OrderCto> findOrdersByPost(OrderSearchCriteriaTo criteria) {
 
-	@Override
-	public List<OrderCto> findOrdersByInvitedGuest(Long invitedGuestId) {
+    return findOrderCtos(criteria);
+  }
 
-		List<OrderCto> ctos = new ArrayList<>();
-		List<OrderEntity> orders = getOrderDao().findOrdersByInvitedGuest(invitedGuestId);
-		for (OrderEntity order : orders) {
-			processOrders(ctos, order);
-		}
-		return ctos;
+  @Override
+  public List<OrderCto> findOrdersByInvitedGuest(Long invitedGuestId) {
 
-	}
+    List<OrderCto> ctos = new ArrayList<>();
+    List<OrderEntity> orders = getOrderDao().findOrdersByInvitedGuest(invitedGuestId);
+    for (OrderEntity order : orders) {
+      processOrders(ctos, order);
+    }
+    return ctos;
 
-	@Override
-	public List<OrderCto> findOrdersByBookingToken(String bookingToken) {
+  }
 
-		List<OrderCto> ctos = new ArrayList<>();
-		List<OrderEntity> orders = getOrderDao().findOrdersByBookingToken(bookingToken);
-		for (OrderEntity order : orders) {
-			processOrders(ctos, order);
-		}
-		return ctos;
+  @Override
+  public List<OrderCto> findOrdersByBookingToken(String bookingToken) {
 
-	}
+    List<OrderCto> ctos = new ArrayList<>();
+    List<OrderEntity> orders = getOrderDao().findOrdersByBookingToken(bookingToken);
+    for (OrderEntity order : orders) {
+      processOrders(ctos, order);
+    }
+    return ctos;
 
-	@Override
-	public Page<OrderCto> findOrderCtos(OrderSearchCriteriaTo criteria) {
+  }
 
-		List<OrderCto> ctos = new ArrayList<>();
-		Page<OrderCto> pagListTo = null;
-		Page<OrderEntity> orders = getOrderDao().findOrders(criteria);
-		for (OrderEntity order : orders.getContent()) {
-			processOrders(ctos, order);
-		}
+  @Override
+  public Page<OrderCto> findOrderCtos(OrderSearchCriteriaTo criteria) {
 
-		if (ctos.size() > 0) {
-			Pageable pagResultTo = PageRequest.of(criteria.getPageable().getPageNumber(), ctos.size());
-			pagListTo = new PageImpl<>(ctos, pagResultTo, orders.getTotalElements());
-		}
-		return pagListTo;
-	}
+    List<OrderCto> ctos = new ArrayList<>();
+    Page<OrderCto> pagListTo = null;
+    Page<OrderEntity> orders = getOrderDao().findOrders(criteria);
+    for (OrderEntity order : orders.getContent()) {
+      processOrders(ctos, order);
+    }
 
-	/**
-	 * @param ctos
-	 * @param order
-	 */
-	private void processOrders(List<OrderCto> ctos, OrderEntity order) {
+    if (ctos.size() > 0) {
+      Pageable pagResultTo = PageRequest.of(criteria.getPageable().getPageNumber(), ctos.size());
+      pagListTo = new PageImpl<>(ctos, pagResultTo, orders.getTotalElements());
+    }
+    return pagListTo;
+  }
 
-		OrderCto cto = new OrderCto();
-		cto.setBooking(getBeanMapper().map(order.getBooking(), BookingEto.class));
-		cto.setHost(getBeanMapper().map(order.getHost(), BookingEto.class));
-		cto.setAddress(getBeanMapper().map(order.getAddress(), AddressEto.class));
-		cto.setInvitedGuest(getBeanMapper().map(order.getInvitedGuest(), InvitedGuestEto.class));
-		cto.setOrder(getBeanMapper().map(order, OrderEto.class));
-		cto.setOrderLines(getBeanMapper().mapList(order.getOrderLines(), OrderLineCto.class));
-		List<OrderLineCto> orderLinesCto = new ArrayList<>();
-		for (OrderLineEntity orderLine : order.getOrderLines()) {
-			OrderLineCto orderLineCto = new OrderLineCto();
-			orderLineCto.setDish(getBeanMapper().map(orderLine.getDish(), DishEto.class));
-			orderLineCto.setExtras(getBeanMapper().mapList(orderLine.getExtras(), IngredientEto.class));
-			orderLineCto.setOrderLine(getBeanMapper().map(orderLine, OrderLineEto.class));
-			orderLinesCto.add(orderLineCto);
-		}
-		cto.setOrderLines(orderLinesCto);
-		cto.setState(getBeanMapper().map(order.getState(), OrderStateEto.class));
-		ctos.add(cto);
-	}
+  /**
+   * @param ctos
+   * @param order
+   */
+  private void processOrders(List<OrderCto> ctos, OrderEntity order) {
 
-	@Override
-	public List<OrderCto> findOrders(Long idBooking) {
+    OrderCto cto = new OrderCto();
+    cto.setBooking(getBeanMapper().map(order.getBooking(), BookingEto.class));
+    cto.setHost(getBeanMapper().map(order.getHost(), BookingEto.class));
+    cto.setAddress(getBeanMapper().map(order.getAddress(), AddressEto.class));
+    cto.setInvitedGuest(getBeanMapper().map(order.getInvitedGuest(), InvitedGuestEto.class));
+    cto.setOrder(getBeanMapper().map(order, OrderEto.class));
+    cto.setOrderLines(getBeanMapper().mapList(order.getOrderLines(), OrderLineCto.class));
+    List<OrderLineCto> orderLinesCto = new ArrayList<>();
+    for (OrderLineEntity orderLine : order.getOrderLines()) {
+      OrderLineCto orderLineCto = new OrderLineCto();
+      orderLineCto.setDish(getBeanMapper().map(orderLine.getDish(), DishEto.class));
+      orderLineCto.setExtras(getBeanMapper().mapList(orderLine.getExtras(), IngredientEto.class));
+      orderLineCto.setOrderLine(getBeanMapper().map(orderLine, OrderLineEto.class));
+      orderLinesCto.add(orderLineCto);
+    }
+    cto.setOrderLines(orderLinesCto);
+    cto.setState(getBeanMapper().map(order.getState(), OrderStateEto.class));
+    ctos.add(cto);
+  }
 
-		List<OrderCto> ctos = new ArrayList<>();
-		List<OrderEntity> orders = getOrderDao().findOrders(idBooking);
-		for (OrderEntity order : orders) {
-			processOrders(ctos, order);
-		}
+  @Override
+  public List<OrderCto> findOrders(Long idBooking) {
 
-		return ctos;
-	}
+    List<OrderCto> ctos = new ArrayList<>();
+    List<OrderEntity> orders = getOrderDao().findOrders(idBooking);
+    for (OrderEntity order : orders) {
+      processOrders(ctos, order);
+    }
 
-	@Override
-	public boolean deleteOrder(Long orderId) {
+    return ctos;
+  }
 
-		OrderEntity order = getOrderDao().find(orderId);
+  @Override
+  public boolean deleteOrder(Long orderId) {
 
-		if (!cancellationAllowed(order)) {
-			throw new CancelNotAllowedException();
-		}
-		List<OrderLineEntity> orderLines = getOrderLineDao().findOrderLines(order.getId());
+    OrderEntity order = getOrderDao().find(orderId);
 
-		for (OrderLineEntity orderLine : orderLines) {
-			getOrderLineDao().deleteById(orderLine.getId());
-		}
-		getOrderDao().delete(order);
-		LOG.debug("The order with id '{}' has been deleted.", orderId);
+    if (!cancellationAllowed(order)) {
+      throw new CancelNotAllowedException();
+    }
+    List<OrderLineEntity> orderLines = getOrderLineDao().findOrderLines(order.getId());
 
-		return true;
-	}
+    for (OrderLineEntity orderLine : orderLines) {
+      getOrderLineDao().deleteById(orderLine.getId());
+    }
+    getOrderDao().delete(order);
+    LOG.debug("The order with id '{}' has been deleted.", orderId);
 
-	@Override
-	public OrderEto saveOrder(OrderCto order) {
+    return true;
+  }
 
-		Objects.requireNonNull(order, "order");
-		List<OrderLineCto> linesCto = order.getOrderLines();
-		List<OrderLineEntity> orderLineEntities = new ArrayList<>();
-		for (OrderLineCto lineCto : linesCto) {
-			OrderLineEntity orderLineEntity = getBeanMapper().map(lineCto, OrderLineEntity.class);
-			orderLineEntity.setExtras(getBeanMapper().mapList(lineCto.getExtras(), IngredientEntity.class));
-			orderLineEntity.setDishId(lineCto.getOrderLine().getDishId());
-			orderLineEntity.setAmount(lineCto.getOrderLine().getAmount());
-			orderLineEntity.setComment(lineCto.getOrderLine().getComment());
-			orderLineEntities.add(orderLineEntity);
-		}
-		OrderStateEto a = new OrderStateEto();
-		a.setId(0L);
-		order.setState(a);
-		OrderEntity orderEntity = getBeanMapper().map(order, OrderEntity.class);
-		String token = orderEntity.getBooking().getBookingToken();
-		// initialize, validate orderEntity here if necessary
-		orderEntity = getValidatedOrder(orderEntity.getBooking().getBookingToken(), orderEntity);
-		orderEntity.setOrderLines(orderLineEntities);
-		OrderEntity resultOrderEntity = getOrderDao().save(orderEntity);
-		LOG.debug("Order with id '{}' has been created.", resultOrderEntity.getId());
+  @Override
+  public OrderEto saveOrder(OrderCto order) {
 
-		for (OrderLineEntity orderLineEntity : orderLineEntities) {
-			orderLineEntity.setOrderId(resultOrderEntity.getId());
-			OrderLineEntity resultOrderLine = getOrderLineDao().save(orderLineEntity);
-			LOG.info("OrderLine with id '{}' has been created.", resultOrderLine.getId());
-		}
-		try {
-			orderEntity
-					.setOrderToken(buildToken(orderEntity.getId().toString() + order.getBooking().getEmail(), "OR_"));
-		} catch (NoSuchAlgorithmException e) {
-			LOG.debug("MD5 Algorithm not available at the enviroment");
-		}
-		sendOrderConfirmationEmail(token, resultOrderEntity);
+    Objects.requireNonNull(order, "order");
+    List<OrderLineCto> linesCto = order.getOrderLines();
+    List<OrderLineEntity> orderLineEntities = new ArrayList<>();
+    for (OrderLineCto lineCto : linesCto) {
+      OrderLineEntity orderLineEntity = getBeanMapper().map(lineCto, OrderLineEntity.class);
+      orderLineEntity.setExtras(getBeanMapper().mapList(lineCto.getExtras(), IngredientEntity.class));
+      orderLineEntity.setDishId(lineCto.getOrderLine().getDishId());
+      orderLineEntity.setAmount(lineCto.getOrderLine().getAmount());
+      orderLineEntity.setComment(lineCto.getOrderLine().getComment());
+      orderLineEntities.add(orderLineEntity);
+    }
+    OrderStateEto a = new OrderStateEto();
+    a.setId(0L);
+    order.setState(a);
+    OrderEntity orderEntity = getBeanMapper().map(order, OrderEntity.class);
+    String token = orderEntity.getBooking().getBookingToken();
+    // initialize, validate orderEntity here if necessary
+    orderEntity = getValidatedOrder(orderEntity.getBooking().getBookingToken(), orderEntity);
+    orderEntity.setOrderLines(orderLineEntities);
+    orderEntity.setPaidId(0l);
+    if (order.getAddress() != null) {
+      AddressEntity address = new AddressEntity();
+      address.setCity(order.getAddress().getCity());
+      address.setHouseNumber(order.getAddress().getHouseNumber());
+      address.setPostCode(order.getAddress().getPostCode());
+      address.setStreetName(order.getAddress().getStreetName());
+      orderEntity.setAddress(address);
+      getAddressDao().save(address);
+    }
 
-		return getBeanMapper().map(resultOrderEntity, OrderEto.class);
-	}
+    OrderEntity resultOrderEntity = getOrderDao().save(orderEntity);
+    LOG.debug("Order with id '{}' has been created.", resultOrderEntity.getId());
 
-	@Override
-	public OrderEto updateOrderState(OrderEto order) {
+    for (OrderLineEntity orderLineEntity : orderLineEntities) {
+      orderLineEntity.setOrderId(resultOrderEntity.getId());
+      OrderLineEntity resultOrderLine = getOrderLineDao().save(orderLineEntity);
+      LOG.info("OrderLine with id '{}' has been created.", resultOrderLine.getId());
+    }
+    try {
+      orderEntity.setOrderToken(buildToken(orderEntity.getId().toString() + order.getBooking().getEmail(), "OR_"));
+    } catch (NoSuchAlgorithmException e) {
+      LOG.debug("MD5 Algorithm not available at the enviroment");
+    }
+    sendOrderConfirmationEmail(token, resultOrderEntity);
 
-		OrderEntity orderEntity = getOrderDao().find(order.getId());
-		OrderStateEntity orderStateEntity = getOrderStateDao().find(order.getStateId());
-		orderEntity.setState(orderStateEntity);
-		OrderEntity resultOrderEntity = getOrderDao().save(orderEntity);
-		LOG.debug("Order with id '{}' has been updated.", resultOrderEntity.getId());
+    return getBeanMapper().map(resultOrderEntity, OrderEto.class);
+  }
 
-		return getBeanMapper().map(resultOrderEntity, OrderEto.class);
-	}
+  @Override
+  public OrderEto updateOrderState(OrderEto order) {
 
-	public ActiveOrdersWithDateCto findActiveOrders(OrderSearchCriteriaTo email) {
+    OrderEntity orderEntity = getOrderDao().find(order.getId());
+    OrderStateEntity orderStateEntity = getOrderStateDao().find(order.getStateId());
+    orderEntity.setState(orderStateEntity);
+    OrderEntity resultOrderEntity = getOrderDao().save(orderEntity);
+    LOG.debug("Order with id '{}' has been updated.", resultOrderEntity.getId());
 
-		LOG.debug("Get active orders with email " + email.getEmail() + " from database.");
+    return getBeanMapper().map(resultOrderEntity, OrderEto.class);
+  }
 
-		List<OrderEto> orders = new ArrayList<OrderEto>();
-		List<OrderEntity> entityList = getOrderDao().findAktiveOrdersByEmail(email.getEmail());
-		HashSet<Long> s = new HashSet<Long>();
+  @Override
+  public OrdersCto findActiveOrders(OrderSearchCriteriaTo email) {
 
-		for (OrderEntity order : entityList) {
-			orders.add(getBeanMapper().map(order, OrderEto.class));
-			if(!s.contains(order.getBookingId())) {
-				s.add(Long.valueOf(order.getBookingId()));
-			}
-		}
-		
-		List<OrdersEto> eto = new ArrayList<OrdersEto>();
-		List<OrderEto> newOrders;
-		OrdersEto obj;
-			
-		for(long bookingId: s) {
-			newOrders = new ArrayList<OrderEto>();
-			obj = new OrdersEto();
-			
-			for(OrderEto order: orders) {
-				if(bookingId == order.getBookingId()) {
-					newOrders.add(order);
-				}			
-			}
-			
-			Instant creationDate = this.bookingManagement.findBooking(bookingId).getBooking().getCreationDate();
-			
-			obj.setCreationDate(creationDate);
-			obj.setOrders(newOrders);
-			eto.add(obj);
-		}
-		ActiveOrdersWithDateCto cto = new ActiveOrdersWithDateCto();
-		cto.setContent(eto);
-		return cto;
-	}
+    LOG.debug("Get active orders with email " + email.getEmail() + " from database.");
 
-	@Override
-	public OrderEto updateOrderPayState(OrderEto order) {
+    OrdersCto cto = new OrdersCto();
+    List<OrderEto> orders = new ArrayList<OrderEto>();
+    List<OrderEntity> entityList = getOrderDao().findAktiveOrdersByEmail(email.getEmail());
 
-		OrderEntity orderEntity = getOrderDao().find(order.getId());
-		OrderPaidEntity orderPayStateEntity = getOrderPayStateDao().find(order.getPaidId());
+    for (OrderEntity order : entityList) {
+      orders.add(getBeanMapper().map(order, OrderEto.class));
+    }
 
-		orderEntity.setPaid(orderPayStateEntity);
-		OrderEntity resultOrderEntity = getOrderDao().save(orderEntity);
-		LOG.debug("Order with id '{}' has been updated.", resultOrderEntity.getId());
+    cto.setOrders(orders);
+    return cto;
+  }
 
-		return getBeanMapper().map(resultOrderEntity, OrderEto.class);
-	}
+  @Override
+  public OrderEto updateOrderPayState(OrderEto order) {
 
-	/**
-	 * Returns the field 'orderDao'.
-	 *
-	 * @return the {@link OrderDao} instance.
-	 */
-	public OrderRepository getOrderDao() {
+    OrderEntity orderEntity = getOrderDao().find(order.getId());
+    OrderPaidEntity orderPayStateEntity = getOrderPayStateDao().find(order.getPaidId());
 
-		return this.orderDao;
-	}
+    orderEntity.setPaid(orderPayStateEntity);
+    OrderEntity resultOrderEntity = getOrderDao().save(orderEntity);
+    LOG.debug("Order with id '{}' has been updated.", resultOrderEntity.getId());
 
-	@Override
-	public OrderLineEto findOrderLine(Long id) {
+    return getBeanMapper().map(resultOrderEntity, OrderEto.class);
+  }
 
-		LOG.debug("Get OrderLine with id {} from database.", id);
-		return getBeanMapper().map(getOrderLineDao().find(id), OrderLineEto.class);
-	}
+  /**
+   * Returns the field 'orderDao'.
+   *
+   * @return the {@link OrderDao} instance.
+   */
+  public OrderRepository getOrderDao() {
 
-	@Override
-	public Page<OrderLineCto> findOrderLineCtos(OrderLineSearchCriteriaTo criteria) {
+    return this.orderDao;
+  }
 
-		Page<OrderLineEntity> orderlines = getOrderLineDao().findOrderLines(criteria);
-		List<OrderLineCto> orderLinesCto = new ArrayList<>();
-		for (OrderLineEntity orderline : orderlines.getContent()) {
-			OrderLineCto orderLineCto = new OrderLineCto();
-			orderLineCto
-					.setOrderLine(getBeanMapper().map(this.orderLineDao.find(orderline.getId()), OrderLineEto.class));
-			orderLineCto.setExtras(getBeanMapper().mapList(orderline.getExtras(), IngredientEto.class));
-			orderLinesCto.add(orderLineCto);
-		}
+  @Override
+  public OrderLineEto findOrderLine(Long id) {
 
-		Pageable pagResultTo = PageRequest.of(criteria.getPageable().getPageNumber(), orderLinesCto.size());
-		Page<OrderLineCto> pagListTo = new PageImpl<>(orderLinesCto, pagResultTo, pagResultTo.getPageSize());
-		return pagListTo;
-	}
+    LOG.debug("Get OrderLine with id {} from database.", id);
+    return getBeanMapper().map(getOrderLineDao().find(id), OrderLineEto.class);
+  }
 
-	@Override
-	public boolean deleteOrderLine(Long orderLineId) {
+  @Override
+  public Page<OrderLineCto> findOrderLineCtos(OrderLineSearchCriteriaTo criteria) {
 
-		OrderLineEntity orderLine = getOrderLineDao().find(orderLineId);
-		getOrderLineDao().delete(orderLine);
-		LOG.debug("The orderLine with id '{}' has been deleted.", orderLineId);
-		return true;
-	}
+    Page<OrderLineEntity> orderlines = getOrderLineDao().findOrderLines(criteria);
+    List<OrderLineCto> orderLinesCto = new ArrayList<>();
+    for (OrderLineEntity orderline : orderlines.getContent()) {
+      OrderLineCto orderLineCto = new OrderLineCto();
+      orderLineCto.setOrderLine(getBeanMapper().map(this.orderLineDao.find(orderline.getId()), OrderLineEto.class));
+      orderLineCto.setExtras(getBeanMapper().mapList(orderline.getExtras(), IngredientEto.class));
+      orderLinesCto.add(orderLineCto);
+    }
 
-	@Override
-	public OrderLineEto saveOrderLine(OrderLineEto orderLine) {
+    Pageable pagResultTo = PageRequest.of(criteria.getPageable().getPageNumber(), orderLinesCto.size());
+    Page<OrderLineCto> pagListTo = new PageImpl<>(orderLinesCto, pagResultTo, pagResultTo.getPageSize());
+    return pagListTo;
+  }
 
-		Objects.requireNonNull(orderLine, "orderLine");
-		OrderLineEntity orderLineEntity = getBeanMapper().map(orderLine, OrderLineEntity.class);
+  @Override
+  public boolean deleteOrderLine(Long orderLineId) {
+
+    OrderLineEntity orderLine = getOrderLineDao().find(orderLineId);
+    getOrderLineDao().delete(orderLine);
+    LOG.debug("The orderLine with id '{}' has been deleted.", orderLineId);
+    return true;
+  }
+
+  @Override
+  public OrderLineEto saveOrderLine(OrderLineEto orderLine) {
+
+    Objects.requireNonNull(orderLine, "orderLine");
+    OrderLineEntity orderLineEntity = getBeanMapper().map(orderLine, OrderLineEntity.class);
+
+    // initialize, validate orderLineEntity here if necessary
+    OrderLineEntity resultEntity = getOrderLineDao().save(orderLineEntity);
+    LOG.debug("OrderLine with id '{}' has been created.", resultEntity.getId());
 
     return getBeanMapper().map(resultEntity, OrderLineEto.class);
   }
