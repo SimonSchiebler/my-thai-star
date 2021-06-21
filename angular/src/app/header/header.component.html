@@ -105,7 +105,14 @@
       >
         {{ 'main.admin' | transloco | uppercase }}
       </a>
-      
+      <a
+      mat-tab-link
+      routerLink="/devices"
+      routerLinkActive="navBottomBorder"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      {{ 'main.devices' | transloco | uppercase }}
+    </a>
     </nav>
   </div>
   <button

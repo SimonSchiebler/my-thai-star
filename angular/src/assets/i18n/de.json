@@ -91,7 +91,8 @@
     "orders": "Bestellungen",
     "order-archive":"Archiv",
     "reservations": "Reservierungen",
-    "admin": "Administation",
+    "admin": "Benutzer",
+    "devices": "Geräte",
     "aboutYou":{
       "opening": "Öffnungszeiten",
       "title": "Über uns",
@@ -193,6 +194,10 @@
           "idH": "Id",
           "userRoleIdH": "Rolle",
           "deleteButtonH": "Löschen"
+      },
+      "deviceTable":{
+        "tableNumber":"Tischnummer",
+        "deviceId":"Geräte Id"
       },
       "userDeleteMessage": "Bestätigen Sie das Löschen des Users: ",
       "warning": "Sind Sie sicher?",   

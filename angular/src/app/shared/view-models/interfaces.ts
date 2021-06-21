@@ -88,16 +88,16 @@ export interface OrderViewResult {
 }
 
 export interface AddressView {
-  modificationCounter: 0,
-  id: number,
-  stateOrRegion : string,
-  city : string,
-  countryCode : string,
-  postalCode : string,
-  addressLine1 : string,
-  addressLine2 : string,
-  addressLine3 : string,
-  districtOrCounty : string
+  modificationCounter: 0;
+  id: number;
+  stateOrRegion: string;
+  city: string;
+  countryCode: string;
+  postalCode: string;
+  addressLine1: string;
+  addressLine2: string;
+  addressLine3: string;
+  districtOrCounty: string;
 }
 
 export interface OrderListView {
@@ -135,16 +135,16 @@ export interface OrderResponse {
 
 // Interface to recieve responeses from the server using httpclient for get tables
 export interface Table {
-  modificationCounter: number,
-  id: number,
-  seatsNumber: number
+  modificationCounter: number;
+  id: number;
+  seatsNumber: number;
 }
 
 // Interface to recieve responeses from the server using httpclient for get tables
 export interface TableResponse {
   content: Table[];
   pageable: Pageable;
-  totalElements:number;
+  totalElements: number;
 }
 
 // Interface to recieve responeses from the server using httpclient for get OrderDishResponse
@@ -248,6 +248,19 @@ export interface UserListView {
 
 export interface UsersResponse {
   content: UserListView;
+  pageable: Pageable;
+  totalElements: number;
+}
+
+export interface TableView {
+  modificationCounter: number;
+  id: number;
+  seatsNumber: number;
+  deviceId: string | undefined;
+}
+
+export interface TablesResponse {
+  content: TableView[];
   pageable: Pageable;
   totalElements: number;
 }

@@ -99,7 +99,8 @@
     "orders": "Orders",
     "order-archive":"Archive",
     "reservations": "Reservations",
-    "admin": "Admin",
+    "admin": "Users",
+    "devices": "Devices",
     "userActions": {
       "user": "User",
       "pairing": "Set two-factor authentication",
@@ -190,6 +191,10 @@
         "idH": "User",
         "userRoleIdH": "Role",
         "deleteButtonH": "Delete"
+      },
+      "deviceTable":{
+        "tableNumber":"Table Number",
+        "deviceId":"Device Id"
       },
       "successBarCreated": {
         "stringpart1": "User ",
