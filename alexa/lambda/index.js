@@ -5,29 +5,22 @@ const Alexa = require("ask-sdk-core");
 
 const util = process.env.DEBUG ? require("./utilMock") : require("./util");
 
-const messages = {
-  WELCOME:
-    "Welcome to the Sample Alexa Customer Profile API Skill! You can ask for your name, your email address, or your phone number. What do you want to ask?",
-  WHAT_DO_YOU_WANT: "What do you want to ask?",
-  NOTIFY_MISSING_PERMISSIONS:
-    "Please enable Customer Profile permissions in the Amazon Alexa app.",
-  NAME_MISSING:
-    "You can set your name either in the Alexa app under calling and messaging, or you can set it at Amazon.com, under log-in and security.",
-  EMAIL_MISSING:
-    "You can set your email at Amazon.com, under log-in and security.",
-  NUMBER_MISSING:
-    "You can set your phone number at Amazon.com, under log-in and security.",
-  NAME_AVAILABLE: "Here is your full name: ",
-  RESERVED_TABLE: "Reserved Table for: ",
-  NUMBER_AVAILABLE: "Here is your phone number: ",
-  ERROR: "Uh Oh. Looks like something went wrong.",
-  API_FAILURE:
-    "There was an error with the Alexa Customer Profile API. Please try again.",
-  GOODBYE: "Bye! Thanks for using the Sample Alexa Customer Profile API Skill!",
-  UNHANDLED: "This skill doesn't support that. Please ask something else.",
-  HELP: "You can use this skill by asking something like: whats my name?",
-  STOP: "Bye! Thanks for using the Sample Alexa Customer Profile API Skill!",
-};
+let responsesDE = require("./responses/DE");
+let responsesEN = require("./responses/EN");
+
+const getResponseObject = (requestEnvelope) =>{
+  //TODO select based on lang
+  //switch (requestEnvelope.something)
+  //{
+  //case DE:
+  //  return responsesDE;
+  //case EN:
+  //  return responsesEN;
+  //default:
+  //  return responsesDE;
+  //}
+  return responsesDE;
+}
 
 const PERMISSIONS = [
   "read::alexa:device:all:address",
@@ -43,9 +36,8 @@ const LaunchRequestHandler = {
     );
   },
   async handle(handlerInput) {
-    const speakOutput =
-      "Welcome to My Thai Star. If you want to know what i can do for you please say Help";
-
+    const messages = getResponseObject(handlerInput.requestEnvelope).LaunchRequestHandler;
+    const speakOutput = messages.sppechoutput;
     return handlerInput.responseBuilder
       .speak(speakOutput)
       .reprompt(speakOutput)
@@ -61,9 +53,9 @@ const ReserveIntentHandler = {
     );
   },
   async handle(handlerInput) {
+    const messages = getResponseObject(handlerInput.requestEnvelope).ReserveIntentHandler;
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
-
     const lastAction = sessionAttributes.lastAction;
 
     switch (lastAction) {
@@ -103,30 +95,28 @@ const ReserveIntentHandler = {
 
       util.createReservation(name, email, combinedDate, assistants, false);
       return handlerInput.responseBuilder
-        .speak(
-          messages.RESERVED_TABLE + email + " for " + date + " at " + time + "."
-        )
+        .speak(messages.buildReservedTableAwnser (email, date, time))
         .getResponse();
     } else if (!date && wantsToOrder === undefined) {
       sessionAttributes.lastAction = "setDate";
       handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
       return handlerInput.responseBuilder
         .addElicitSlotDirective("date")
-        .speak("On what date do you want to reserve the table?")
+        .speak(messages.askForDate)
         .getResponse();
     } else if (!time && wantsToOrder === undefined) {
       sessionAttributes.lastAction = "setTime";
       handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
       return handlerInput.responseBuilder
         .addElicitSlotDirective("time")
-        .speak("On what time do you want to reserve the table?")
+        .speak(messages.askForTime)
         .getResponse();
     } else if (!assistants && wantsToOrder === undefined) {
       sessionAttributes.lastAction = "setAssistants";
       handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
       return handlerInput.responseBuilder
         .addElicitSlotDirective("assistants")
-        .speak("With how many people are you going to come?")
+        .speak(messages.askForNumberOfPeople)
         .getResponse();
     } else if (date && time && assistants && wantsToOrder === undefined) {
       sessionAttributes.lastAction = "setWantsToOrder";
@@ -134,7 +124,7 @@ const ReserveIntentHandler = {
       handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
       return handlerInput.responseBuilder
         .addElicitSlotDirective("wantsToOrder")
-        .speak("Do you want to add an order to your reservation?")
+        .speak(messages.addAnOrderQuestion)
         .getResponse();
     } else if (date && time && assistants && wantsToOrder === "yes") {
       sessionAttributes.lastAction = "setDish";
@@ -146,7 +136,7 @@ const ReserveIntentHandler = {
           confirmationStatus: "CONFIRMED",
           slots: {},
         })
-        .speak("What item do you want to add to your order?")
+        .speak(messages.askForItem)
         .getResponse();
     }
   },
@@ -160,6 +150,7 @@ const OrderIntentHandler = {
     );
   },
   async handle(handlerInput) {
+    const messages = getResponseObject(handlerInput.requestEnvelope).OrderIntentHandler;
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
     if (!sessionAttributes.orderlist) sessionAttributes.orderlist = [];
@@ -181,9 +172,7 @@ const OrderIntentHandler = {
         } else {
           return handlerInput.responseBuilder
             .addElicitSlotDirective("dish")
-            .speak(
-              "Sorry, i did not understand you, please order an item from the menu"
-            )
+            .speak(messages.didNotUnderstandDish)
             .getResponse();
         }
         break;
@@ -210,7 +199,6 @@ const OrderIntentHandler = {
     const deviceAddressServiceClient =
       handlerInput.serviceClientFactory.getDeviceAddressServiceClient();
     const address = await deviceAddressServiceClient.getFullAddress(deviceId);
-    console.log(address);
 
     handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
@@ -223,7 +211,7 @@ const OrderIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
           .addElicitSlotDirective("dish")
-          .speak("What item do you want to add to your order?")
+          .speak(messages.askForItem)
           .getResponse();
       } else if (
         !amount &&
@@ -233,7 +221,7 @@ const OrderIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
           .addElicitSlotDirective("amount")
-          .speak("How many times would you like to order that item")
+          .speak(messages.askForItemCount)
           .getResponse();
       } else if (
         amount &&
@@ -250,12 +238,12 @@ const OrderIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
           .addElicitSlotDirective("completedOrder")
-          .speak("Do you want to add another item from the Menu?")
+          .speak(messages.askOneMore)
           .getResponse();
       } else if (amount && dish && oneMoreOrder === "no") {
         return handlerInput.responseBuilder
           .addElicitSlotDirective("confirmation")
-          .speak("Do you want to hear your Order again?")
+          .speak(messages.askRepeatOrder)
           .getResponse();
       }
       if (!dish && (oneMoreOrder === "yes" || oneMoreOrder === undefined)) {
@@ -263,7 +251,7 @@ const OrderIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
           .addElicitSlotDirective("dish")
-          .speak("What item do you want to add to your order?")
+          .speak(messages.askForItem)
           .getResponse();
       } else if (
         !amount &&
@@ -273,7 +261,7 @@ const OrderIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
           .addElicitSlotDirective("amount")
-          .speak("How many times would you like to order that item")
+          .speak(messages.askForItemCount)
           .getResponse();
       } else if (
         amount &&
@@ -290,12 +278,12 @@ const OrderIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
           .addElicitSlotDirective("completedOrder")
-          .speak("Do you want to add another item from the Menu?")
+          .speak(messages.askOneMore)
           .getResponse();
       } else if (oneMoreOrder === "no") {
         return handlerInput.responseBuilder
           .addElicitSlotDirective("confirmation")
-          .speak("Do you want to hear your Order again?")
+          .speak(messages.askRepeatOrder)
           .getResponse();
       }
     } else if (
@@ -308,16 +296,8 @@ const OrderIntentHandler = {
         handlerInput.requestEnvelope.request.intent.slots.correct.value ===
           undefined
       ) {
-        var speakOutput = "Your Order is: \n";
-        var i;
-
-        const orders = sessionAttributes.orderlist;
-        for (i = 0; i < orders.length; i++) {
-          speakOutput +=
-            orders[i].amount + " times the " + orders[i].dish.name + ".\n";
-        }
-        speakOutput += "Is that correct?";
-
+        
+        const speakOutput = messages.buildCurrentOrderContents(sessionAttributes.orderlist)
         return handlerInput.responseBuilder
           .addElicitSlotDirective("correct")
           .speak(speakOutput)
@@ -339,7 +319,7 @@ const OrderIntentHandler = {
           );
           return handlerInput.responseBuilder
             .speak(
-              "Your delivery has been placed. Thank you for ordering from us."
+              messages.deliveryConfirmation
             )
             .getResponse();
         } else if (sessionAttributes.wantsToOrder === "yes") {
@@ -357,7 +337,7 @@ const OrderIntentHandler = {
             assistants
           );
           return handlerInput.responseBuilder
-            .speak("Your Order has been placed. Thank you for your booking.")
+            .speak(messages.orderConfirmation)
             .getResponse();
         }
       } else if (
@@ -367,7 +347,7 @@ const OrderIntentHandler = {
       ) {
         return handlerInput.responseBuilder
           .speak(
-            "I'm Sorry to hear that. If you want to make a new Order please call the My Thai Star Skill again."
+            messages.orderNotConfirmed
           )
           .getResponse();
       }
@@ -383,60 +363,11 @@ const OrderStateHandler = {
     );
   },
   async handle(handlerInput) {
+    const messages = getResponseObject(handlerInput.requestEnvelope).OrderStateHandler
     const client = handlerInput.serviceClientFactory.getUpsServiceClient();
     const email = await client.getProfileEmail();
-
     const orders = await util.getActiveOrders(email);
-    console.log(orders);
-
-    var i;
-    let res =
-      "you currently have " + orders.content.length + " open orders. \n";
-
-    for (i = 0; i < orders.content.length; i++) {
-      let state;
-      switch (orders.content[i].orders[0].stateId) {
-        case 0:
-          state = "ordered";
-          break;
-        case 1:
-          state = "preperation";
-          break;
-        case 2:
-          state = "delivery";
-          break;
-        default:
-          break;
-      }
-      var t = new Date(1970, 0, 1);
-      t.setSeconds(parseInt(orders.content[i].creationDate) + 7200);
-
-      var date =
-        t.toDateString() + " at " + t.getHours() + ":" + t.getMinutes();
-      console.log(date);
-      if (orders.content.length === 1) {
-        res +=
-          "\n" +
-          "Your order is currently in the state: " +
-          state +
-          ". It was placed on: " +
-          date +
-          "." +
-          "\n";
-      } else {
-        res +=
-          "\n" +
-          "Your " +
-          (i + 1) +
-          "th order is currently in the state: " +
-          state +
-          ". It was placed on: " +
-          date +
-          "." +
-          "\n";
-      }
-    }
-
+    let res = messages.buildOpenOrders(orders.content);
 
     return handlerInput.responseBuilder.speak(res).getResponse();
   },
@@ -451,10 +382,9 @@ const AddressIntentHandler = {
   },
 
   async handle(handlerInput) {
-    const speakOutput =
-      "The restaurants address is Place de l'Étoile - 11 rue de Tilsitt - 75017 Paris.";
+    const messages = getResponseObject(handlerInput.requestEnvelope).AddressIntentHandler
 
-    return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+    return handlerInput.responseBuilder.speak(messages.address).getResponse();
   },
 };
 
@@ -466,13 +396,13 @@ const WaiterIntentHandler = {
     );
   },
   async handle(handlerInput) {
+    const messages = getResponseObject(handlerInput.requestEnvelope).WaiterIntentHandler;
     const { deviceId } = handlerInput.requestEnvelope.context.System.device;
-    console.log(deviceId);
     
     await util.setWaiterState(2, deviceId);
 
     return handlerInput.responseBuilder
-      .speak("The waiter for your table was informed that you need help.")
+      .speak(messages.waiterWasCalled)
       .getResponse();
   }
 };
@@ -485,13 +415,14 @@ const BillIntentHandler = {
     );
   },
   async handle(handlerInput) {
+    const messages = getResponseObject(handlerInput.requestEnvelope).BillIntentHandler;
     const { deviceId } = handlerInput.requestEnvelope.context.System.device;
     console.log(deviceId);
 
     await util.setWaiterState(1, deviceId);
 
     return handlerInput.responseBuilder
-      .speak("The waiter for your table was informed that you want to pay and need the bill.")
+      .speak(message.billRequested)
       .getResponse();
   }
 };
@@ -504,6 +435,7 @@ const MenuIntentHandler = {
     );
   },
   async handle(handlerInput) {
+    messages = getResponseObject(handlerInput.requestEnvelope).MenuIntentHandler;
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
     if (!sessionAttributes.page) sessionAttributes.page = 0;
@@ -515,7 +447,7 @@ const MenuIntentHandler = {
       handlerInput.requestEnvelope.request.intent.slots.hearMore.value ===
       undefined
     ) {
-      var speakOutput = "The current Items on the Menu are: ";
+      var speakOutput = messages.whatIsOnTheMenu;
       const dishes = await util.getDishes(size, page);
       page++;
       sessionAttributes.page = page;
@@ -524,7 +456,7 @@ const MenuIntentHandler = {
       for (i = 0; i < dishes.content.length; i++) {
         speakOutput += dishes.content[i].dish.name + ", ";
       }
-      speakOutput += "do you want to hear more dishes?";
+      speakOutput += messages.askMoreDishes;
 
       return handlerInput.responseBuilder
         .addElicitSlotDirective("hearMore")
@@ -540,7 +472,7 @@ const MenuIntentHandler = {
 
       if (dishes === undefined) {
         return handlerInput.responseBuilder
-          .speak("Sorry there are no more dishes on the menu")
+          .speak(messages.noMoreDishes)
           .getResponse();
       } else if (dishes.content.length < size) {
         var i;
@@ -548,7 +480,7 @@ const MenuIntentHandler = {
         for (i = 0; i < dishes.content.length; i++) {
           speakOutput += dishes.content[i].dish.name + ", ";
         }
-        speakOutput += "Thats everything that is on the menu.";
+        speakOutput += messages.endOfMenu;
         return handlerInput.responseBuilder.speak(speakOutput).getResponse();
       } else if (dishes.content.length === size) {
         var i;
@@ -556,7 +488,7 @@ const MenuIntentHandler = {
         for (i = 0; i < dishes.content.length; i++) {
           speakOutput += dishes.content[i].dish.name + ", ";
         }
-        speakOutput += "Do you want to hear more?";
+        speakOutput += message.askMoreDishes;
         return handlerInput.responseBuilder
           .addElicitSlotDirective("hearMore")
           .speak(speakOutput)
@@ -566,7 +498,7 @@ const MenuIntentHandler = {
       handlerInput.requestEnvelope.request.intent.slots.hearMore.value === "no"
     ) {
       return handlerInput.responseBuilder
-        .speak("Hope you heared something you liked")
+        .speak(messages.endingPhrase)
         .getResponse();
     }
   },
@@ -580,12 +512,10 @@ const HelpIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const speakOutput =
-      "I currently have following commands: order food, reserve a table and whats the state of my order";
+    const messages = getResponseObject(handlerInput.requestEnvelope).HelpIntentHandler;
 
     return handlerInput.responseBuilder
-      .speak(speakOutput)
-      .reprompt(speakOutput)
+      .speak(messages.helpMessage)
       .getResponse();
   },
 };
@@ -600,7 +530,8 @@ const CancelAndStopIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const speakOutput = "Goodbye!";
+    const messages = getResponseObject(handlerInput.requestEnvelope).CancelAndStopIntentHandler;
+    const speakOutput = messages.bye;
     return handlerInput.responseBuilder.speak(speakOutput).getResponse();
   },
 };
@@ -648,8 +579,9 @@ const ErrorHandler = {
     return true;
   },
   async handle(handlerInput, error) {
+    const messages = getResponseObject(handlerInput.requestEnvelope).error;
     console.log(`~~~~ Error handled: ${error.stack}`);
-    const speakOutput = `Sorry, I had trouble doing what you asked. Please try again.`;
+    const speakOutput = messages.genericError;
 
     return handlerInput.responseBuilder
       .speak(speakOutput)
@@ -663,6 +595,8 @@ const ProfileError = {
     return error.name === "ServiceError";
   },
   handle(handlerInput, error) {
+    const messages = getResponseObject(handlerInput.requestEnvelope).error;
+    console.log(`~~~~ Error handled: ${error.stack}`);
     if (error.statusCode === 403) {
       return handlerInput.responseBuilder
         .speak(messages.NOTIFY_MISSING_PERMISSIONS)
