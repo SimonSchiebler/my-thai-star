@@ -19,6 +19,7 @@ export class FilterCockpit {
     archive: boolean;
     order_cockpit: boolean;
     bookingToken: number;
+    delivery: boolean;
 }
 
 export class FilterOrdersCockpit {

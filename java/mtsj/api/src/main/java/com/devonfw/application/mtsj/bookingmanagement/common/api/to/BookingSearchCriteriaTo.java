@@ -16,6 +16,8 @@ public class BookingSearchCriteriaTo extends AbstractSearchCriteriaTo {
 
 	private static final long serialVersionUID = 1L;
 
+	private Boolean delivery;
+
 	private String name;
 
 	private String bookingToken;
@@ -58,6 +60,14 @@ public class BookingSearchCriteriaTo extends AbstractSearchCriteriaTo {
 	public BookingSearchCriteriaTo() {
 
 		super();
+	}
+
+	public Boolean getDelivery() {
+		return delivery;
+	}
+
+	public void setDelivery(Boolean delivery) {
+		this.delivery = delivery;
 	}
 
 	public Long getWaitersHelp() {

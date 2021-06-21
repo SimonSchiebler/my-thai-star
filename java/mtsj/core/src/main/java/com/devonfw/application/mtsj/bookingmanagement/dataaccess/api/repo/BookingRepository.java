@@ -59,6 +59,11 @@ public interface BookingRepository extends DefaultRepository<BookingEntity> {
 		BookingEntity alias = newDslAlias();
 		JPAQuery<BookingEntity> query = newDslQuery(alias);
 
+		Boolean delivery = criteria.getDelivery();
+		if ((delivery != null)) {
+			query.where(Alias.$(alias.getDelivery()).eq(delivery));
+		}
+		
 		String name = criteria.getName();
 		if ((name != null) && !name.isEmpty()) {
 			QueryUtil.get().whereString(query, $(alias.getName()), name, criteria.getNameOption());

@@ -49,7 +49,8 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
     bookingToken: undefined,
     stateId: undefined,
     archive: undefined,
-    order_cockpit: undefined
+    order_cockpit: undefined,
+    delivery: false
   };
 
   constructor(
@@ -101,7 +102,7 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
         if (!data) {
           this.reservations = [];
         } else {
-          this.reservations = data.content.filter(row => !row.booking.delivery);
+          this.reservations = data.content;
         }
         this.totalReservations = data.totalElements;
       });

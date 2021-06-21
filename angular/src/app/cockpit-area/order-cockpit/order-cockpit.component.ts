@@ -60,6 +60,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
     stateId: undefined,
     archive: false,
     order_cockpit: true,
+    delivery: undefined
   };
 
   stateNames = [];
