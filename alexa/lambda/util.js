@@ -303,11 +303,19 @@ module.exports.setWaiterState = async (state, deviceId) => {
 
 module.exports.getCurrentBooking = async (deviceId) => {
   return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+        deviceId: deviceId
+    });
+
     const options = {
       port: config.myThaiStarBackend.port,
-      path: config.myThaiStarBackend.getCurrentBookingEndpoint + "/" + deviceId,
-      method: "GET",
+      path: config.myThaiStarBackend.getCurrentBookingEndpoint + deviceId,
+      method: "POST",
       host: config.myThaiStarBackend.host,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": body.length,
+      },
     };
 
     const req = http.request(options, (res) => {
@@ -326,7 +334,45 @@ module.exports.getCurrentBooking = async (deviceId) => {
       reject(error);
     });
 
-    req.write();
+    req.write(body);
+    req.end();
+  });
+}
+
+module.exports.getTableByDeviceId = async (deviceId) => {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+        deviceId: deviceId
+    });
+
+    const options = {
+      port: config.myThaiStarBackend.port,
+      path: config.myThaiStarBackend.getTableByDeviceIdEndpoint,
+      method: "POST",
+      host: config.myThaiStarBackend.host,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": body.length,
+      },
+    };
+
+    const req = http.request(options, (res) => {
+      console.log(`statusCode: ${res.statusCode}`);
+      let responseObjectString = "";
+      res.on("data", (d) => {
+        responseObjectString += d.toString();
+        process.stdout.write(d);
+      });
+      res.on("end", (d) => {
+        resolve(JSON.parse(responseObjectString));
+      });
+    });
+
+    req.on("error", (error) => {
+      reject(error);
+    });
+
+    req.write(body);
     req.end();
   });
 } 

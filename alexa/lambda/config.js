@@ -8,5 +8,6 @@ module.exports = {
         setWaiterStateEndpoint:"/mythaistar/services/rest/bookingmanagement/v1/booking/updateWaitersHelp",
         getDishesEndpoint:"/mythaistar/services/rest/dishmanagement/v1/dish/search",
         getCurrentBookingEndpoint:"/mythaistar/services/rest/bookingmanagement/v1/booking/getBookingByDeviceId",
+        getTableByDeviceIdEndpoint:"/mythaistar/services/rest/bookingmanagement/v1/table/getTableByDeviceId",
     }
 }

@@ -46,6 +46,12 @@ const LaunchRequestHandler = {
     const speakOutput =
       "Welcome to My Thai Star. If you want to know what i can do for you please say Help";
 
+    const table = await util.getTableByDeviceId(handlerInput.requestEnvelope.context.System.device.deviceId);
+    const sessionAttributes =
+      handlerInput.attributesManager.getSessionAttributes();
+    sessionAttributes.tableId = table.id;
+    handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+
     return handlerInput.responseBuilder
       .speak(speakOutput)
       .reprompt(speakOutput)
@@ -64,89 +70,101 @@ const ReserveIntentHandler = {
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
 
-    const lastAction = sessionAttributes.lastAction;
+    if (!sessionAttributes.tableId) {
+      const lastAction = sessionAttributes.lastAction;
 
-    switch (lastAction) {
-      case "setDate":
-        sessionAttributes.date =
-          handlerInput.requestEnvelope.request.intent.slots.date.value;
-        break;
-      case "setTime":
-        sessionAttributes.time =
-          handlerInput.requestEnvelope.request.intent.slots.time.value;
-        break;
-      case "setAssistants":
-        sessionAttributes.assistants =
-          handlerInput.requestEnvelope.request.intent.slots.assistants.value;
-        break;
-      case "setWantsToOrder":
-        sessionAttributes.wantsToOrder =
-          handlerInput.requestEnvelope.request.intent.slots.wantsToOrder.value;
-        break;
-      default:
-        break;
-    }
+      switch (lastAction) {
+        case "setDate":
+          sessionAttributes.date =
+            handlerInput.requestEnvelope.request.intent.slots.date.value;
+          break;
+        case "setTime":
+          sessionAttributes.time =
+            handlerInput.requestEnvelope.request.intent.slots.time.value;
+          break;
+        case "setAssistants":
+          sessionAttributes.assistants =
+            handlerInput.requestEnvelope.request.intent.slots.assistants.value;
+          break;
+        case "setWantsToOrder":
+          sessionAttributes.wantsToOrder =
+            handlerInput.requestEnvelope.request.intent.slots.wantsToOrder.value;
+          break;
+        default:
+          break;
+      }
 
-    const date = sessionAttributes.date;
-    const time = sessionAttributes.time;
-    const assistants = sessionAttributes.assistants;
-    const wantsToOrder = sessionAttributes.wantsToOrder;
-
-    handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-
-    if (wantsToOrder == "no") {
-      const client = handlerInput.serviceClientFactory.getUpsServiceClient();
-      const email = await client.getProfileEmail();
-      const name = await client.getProfileName();
-
-      const combinedDate = date + "T" + time + ":00";
-
-      util.createReservation(name, email, combinedDate, assistants, false);
-      return handlerInput.responseBuilder
-        .speak(
-          messages.RESERVED_TABLE + email + " for " + date + " at " + time + "."
-        )
-        .getResponse();
-    } else if (!date && wantsToOrder === undefined) {
-      sessionAttributes.lastAction = "setDate";
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-      return handlerInput.responseBuilder
-        .addElicitSlotDirective("date")
-        .speak("On what date do you want to reserve the table?")
-        .getResponse();
-    } else if (!time && wantsToOrder === undefined) {
-      sessionAttributes.lastAction = "setTime";
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-      return handlerInput.responseBuilder
-        .addElicitSlotDirective("time")
-        .speak("On what time do you want to reserve the table?")
-        .getResponse();
-    } else if (!assistants && wantsToOrder === undefined) {
-      sessionAttributes.lastAction = "setAssistants";
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-      return handlerInput.responseBuilder
-        .addElicitSlotDirective("assistants")
-        .speak("With how many people are you going to come?")
-        .getResponse();
-    } else if (date && time && assistants && wantsToOrder === undefined) {
-      sessionAttributes.lastAction = "setWantsToOrder";
+      const date = sessionAttributes.date;
+      const time = sessionAttributes.time;
+      const assistants = sessionAttributes.assistants;
+      const wantsToOrder = sessionAttributes.wantsToOrder;
 
       handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-      return handlerInput.responseBuilder
-        .addElicitSlotDirective("wantsToOrder")
-        .speak("Do you want to add an order to your reservation?")
-        .getResponse();
-    } else if (date && time && assistants && wantsToOrder === "yes") {
-      sessionAttributes.lastAction = "setDish";
 
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+      if (wantsToOrder == "no") {
+        const client = handlerInput.serviceClientFactory.getUpsServiceClient();
+        const email = await client.getProfileEmail();
+        const name = await client.getProfileName();
+
+        const combinedDate = date + "T" + time + ":00";
+
+        util.createReservation(name, email, combinedDate, assistants, false);
+        return handlerInput.responseBuilder
+          .speak(
+            messages.RESERVED_TABLE +
+              email +
+              " for " +
+              date +
+              " at " +
+              time +
+              "."
+          )
+          .getResponse();
+      } else if (!date && wantsToOrder === undefined) {
+        sessionAttributes.lastAction = "setDate";
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("date")
+          .speak("On what date do you want to reserve the table?")
+          .getResponse();
+      } else if (!time && wantsToOrder === undefined) {
+        sessionAttributes.lastAction = "setTime";
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("time")
+          .speak("On what time do you want to reserve the table?")
+          .getResponse();
+      } else if (!assistants && wantsToOrder === undefined) {
+        sessionAttributes.lastAction = "setAssistants";
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("assistants")
+          .speak("With how many people are you going to come?")
+          .getResponse();
+      } else if (date && time && assistants && wantsToOrder === undefined) {
+        sessionAttributes.lastAction = "setWantsToOrder";
+
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("wantsToOrder")
+          .speak("Do you want to add an order to your reservation?")
+          .getResponse();
+      } else if (date && time && assistants && wantsToOrder === "yes") {
+        sessionAttributes.lastAction = "setDish";
+
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("dish", {
+            name: "OrderIntent",
+            confirmationStatus: "CONFIRMED",
+            slots: {},
+          })
+          .speak("What item do you want to add to your order?")
+          .getResponse();
+      }
+    } else {
       return handlerInput.responseBuilder
-        .addElicitSlotDirective("dish", {
-          name: "OrderIntent",
-          confirmationStatus: "CONFIRMED",
-          slots: {},
-        })
-        .speak("What item do you want to add to your order?")
+        .speak("Sorry but i'm not allowed to do that.")
         .getResponse();
     }
   },
@@ -172,10 +190,6 @@ const OrderIntentHandler = {
           handlerInput.requestEnvelope.request.intent.slots.dish.resolutions
             .resolutionsPerAuthority[0].values
         ) {
-          if (handlerInput.requestEnvelope.request.intent.slots.amount.value) {
-            sessionAttributes.amount =
-              handlerInput.requestEnvelope.request.intent.slots.amount.value;
-          }
           sessionAttributes.dish =
             handlerInput.requestEnvelope.request.intent.slots.dish.resolutions.resolutionsPerAuthority[0].values[0].value;
         } else {
@@ -213,165 +227,169 @@ const OrderIntentHandler = {
     console.log(address);
 
     handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-
-    if (
-      handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
-      undefined
-    ) {
-      if (!dish && (oneMoreOrder === "yes" || oneMoreOrder === undefined)) {
-        sessionAttributes.lastAction = "setDish";
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("dish")
-          .speak("What item do you want to add to your order?")
-          .getResponse();
-      } else if (
-        !amount &&
-        (oneMoreOrder === "yes" || oneMoreOrder === undefined)
-      ) {
-        sessionAttributes.lastAction = "setAmount";
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("amount")
-          .speak("How many times would you like to order that item")
-          .getResponse();
-      } else if (
-        amount &&
-        dish &&
-        (oneMoreOrder === "yes" || oneMoreOrder === undefined)
-      ) {
-        sessionAttributes.lastAction = "setCompletedOrder";
-
-        sessionAttributes.orderlist.push({ dish, amount });
-
-        delete sessionAttributes.amount;
-        delete sessionAttributes.dish;
-        delete sessionAttributes.completedOrder;
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("completedOrder")
-          .speak("Do you want to add another item from the Menu?")
-          .getResponse();
-      } else if (amount && dish && oneMoreOrder === "no") {
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("confirmation")
-          .speak("Do you want to hear your Order again?")
-          .getResponse();
-      }
-      if (!dish && (oneMoreOrder === "yes" || oneMoreOrder === undefined)) {
-        sessionAttributes.lastAction = "setDish";
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("dish")
-          .speak("What item do you want to add to your order?")
-          .getResponse();
-      } else if (
-        !amount &&
-        (oneMoreOrder === "yes" || oneMoreOrder === undefined)
-      ) {
-        sessionAttributes.lastAction = "setAmount";
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("amount")
-          .speak("How many times would you like to order that item")
-          .getResponse();
-      } else if (
-        amount &&
-        dish &&
-        (oneMoreOrder === "yes" || oneMoreOrder === undefined)
-      ) {
-        sessionAttributes.lastAction = "setCompletedOrder";
-
-        sessionAttributes.orderlist.push({ dish, amount });
-
-        delete sessionAttributes.amount;
-        delete sessionAttributes.dish;
-        delete sessionAttributes.completedOrder;
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("completedOrder")
-          .speak("Do you want to add another item from the Menu?")
-          .getResponse();
-      } else if (oneMoreOrder === "no") {
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("confirmation")
-          .speak("Do you want to hear your Order again?")
-          .getResponse();
-      }
-    } else if (
-      handlerInput.requestEnvelope.request.intent.slots.confirmation.value &&
-      oneMoreOrder === "no"
-    ) {
+    if (!sessionAttributes.tableId){
       if (
         handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
-          "yes" &&
-        handlerInput.requestEnvelope.request.intent.slots.correct.value ===
-          undefined
+        undefined
       ) {
-        var speakOutput = "Your Order is: \n";
-        var i;
-
-        const orders = sessionAttributes.orderlist;
-        for (i = 0; i < orders.length; i++) {
-          speakOutput +=
-            orders[i].amount + " times the " + orders[i].dish.name + ".\n";
+        if (!dish && (oneMoreOrder === "yes" || oneMoreOrder === undefined)) {
+          sessionAttributes.lastAction = "setDish";
+          handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("dish")
+            .speak("What item do you want to add to your order?")
+            .getResponse();
+        } else if (
+          !amount &&
+          (oneMoreOrder === "yes" || oneMoreOrder === undefined)
+        ) {
+          sessionAttributes.lastAction = "setAmount";
+          handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("amount")
+            .speak("How many times would you like to order that item")
+            .getResponse();
+        } else if (
+          amount &&
+          dish &&
+          (oneMoreOrder === "yes" || oneMoreOrder === undefined)
+        ) {
+          sessionAttributes.lastAction = "setCompletedOrder";
+  
+          sessionAttributes.orderlist.push({ dish, amount });
+  
+          delete sessionAttributes.amount;
+          delete sessionAttributes.dish;
+          delete sessionAttributes.completedOrder;
+          handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("completedOrder")
+            .speak("Do you want to add another item from the Menu?")
+            .getResponse();
+        } else if (amount && dish && oneMoreOrder === "no") {
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("confirmation")
+            .speak("Do you want to hear your Order again?")
+            .getResponse();
         }
-        speakOutput += "Is that correct?";
-
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("correct")
-          .speak(speakOutput)
-          .getResponse();
+        if (!dish && (oneMoreOrder === "yes" || oneMoreOrder === undefined)) {
+          sessionAttributes.lastAction = "setDish";
+          handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("dish")
+            .speak("What item do you want to add to your order?")
+            .getResponse();
+        } else if (
+          !amount &&
+          (oneMoreOrder === "yes" || oneMoreOrder === undefined)
+        ) {
+          sessionAttributes.lastAction = "setAmount";
+          handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("amount")
+            .speak("How many times would you like to order that item")
+            .getResponse();
+        } else if (
+          amount &&
+          dish &&
+          (oneMoreOrder === "yes" || oneMoreOrder === undefined)
+        ) {
+          sessionAttributes.lastAction = "setCompletedOrder";
+  
+          sessionAttributes.orderlist.push({ dish, amount });
+  
+          delete sessionAttributes.amount;
+          delete sessionAttributes.dish;
+          delete sessionAttributes.completedOrder;
+          handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("completedOrder")
+            .speak("Do you want to add another item from the Menu?")
+            .getResponse();
+        } else if (oneMoreOrder === "no") {
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("confirmation")
+            .speak("Do you want to hear your Order again?")
+            .getResponse();
+        }
       } else if (
-        (handlerInput.requestEnvelope.request.intent.slots.confirmation
-          .value === "yes" &&
-          handlerInput.requestEnvelope.request.intent.slots.correct.value ===
-            "yes") ||
-        handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
-          "no"
+        handlerInput.requestEnvelope.request.intent.slots.confirmation.value &&
+        oneMoreOrder === "no"
       ) {
-        if (sessionAttributes.wantsToOrder === undefined) {
-          await util.createDelivery(
-            name,
-            email,
-            sessionAttributes.orderlist,
-            address
-          );
+        if (
+          handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
+            "yes" &&
+          handlerInput.requestEnvelope.request.intent.slots.correct.value ===
+            undefined
+        ) {
+          var speakOutput = "Your Order is: \n";
+          var i;
+  
+          const orders = sessionAttributes.orderlist;
+          for (i = 0; i < orders.length; i++) {
+            speakOutput +=
+              orders[i].amount + " times the " + orders[i].dish.name + ".\n";
+          }
+          speakOutput += "Is that correct?";
+  
+          return handlerInput.responseBuilder
+            .addElicitSlotDirective("correct")
+            .speak(speakOutput)
+            .getResponse();
+        } else if (
+          (handlerInput.requestEnvelope.request.intent.slots.confirmation
+            .value === "yes" &&
+            handlerInput.requestEnvelope.request.intent.slots.correct.value ===
+              "yes") ||
+          handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
+            "no"
+        ) {
+          if (sessionAttributes.wantsToOrder === undefined) {
+            await util.createDelivery(
+              name,
+              email,
+              sessionAttributes.orderlist,
+              address
+            );
+            return handlerInput.responseBuilder
+              .speak(
+                "Your delivery has been placed. Thank you for ordering from us."
+              )
+              .getResponse();
+          } else if (sessionAttributes.wantsToOrder === "yes") {
+            const date = sessionAttributes.date;
+            const time = sessionAttributes.time;
+            const assistants = sessionAttributes.assistants;
+  
+            const combinedDate = date + "T" + time + ":00";
+  
+            util.createOrder(
+              name,
+              email,
+              sessionAttributes.orderlist,
+              combinedDate,
+              assistants
+            );
+            return handlerInput.responseBuilder
+              .speak("Your Order has been placed. Thank you for your booking.")
+              .getResponse();
+          }
+        } else if (
+          handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
+            "yes" &&
+          handlerInput.requestEnvelope.request.intent.slots.correct.value === "no"
+        ) {
           return handlerInput.responseBuilder
             .speak(
-              "Your delivery has been placed. Thank you for ordering from us."
+              "I'm Sorry to hear that. If you want to make a new Order please call the My Thai Star Skill again."
             )
             .getResponse();
-        } else if (sessionAttributes.wantsToOrder === "yes") {
-          const date = sessionAttributes.date;
-          const time = sessionAttributes.time;
-          const assistants = sessionAttributes.assistants;
-
-          const combinedDate = date + "T" + time + ":00";
-
-          util.createOrder(
-            name,
-            email,
-            sessionAttributes.orderlist,
-            combinedDate,
-            assistants
-          );
-          return handlerInput.responseBuilder
-            .speak("Your Order has been placed. Thank you for your booking.")
-            .getResponse();
         }
-      } else if (
-        handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
-          "yes" &&
-        handlerInput.requestEnvelope.request.intent.slots.correct.value === "no"
-      ) {
-        return handlerInput.responseBuilder
-          .speak(
-            "I'm Sorry to hear that. If you want to make a new Order please call the My Thai Star Skill again."
-          )
-          .getResponse();
       }
+    }else {
+      
     }
+    
   },
 };
 
@@ -437,7 +455,6 @@ const OrderStateHandler = {
       }
     }
 
-
     return handlerInput.responseBuilder.speak(res).getResponse();
   },
 };
@@ -468,13 +485,13 @@ const WaiterIntentHandler = {
   async handle(handlerInput) {
     const { deviceId } = handlerInput.requestEnvelope.context.System.device;
     console.log(deviceId);
-    
+
     await util.setWaiterState(2, deviceId);
 
     return handlerInput.responseBuilder
       .speak("The waiter for your table was informed that you need help.")
       .getResponse();
-  }
+  },
 };
 
 const BillIntentHandler = {
@@ -491,9 +508,11 @@ const BillIntentHandler = {
     await util.setWaiterState(1, deviceId);
 
     return handlerInput.responseBuilder
-      .speak("The waiter for your table was informed that you want to pay and need the bill.")
+      .speak(
+        "The waiter for your table was informed that you want to pay and need the bill."
+      )
       .getResponse();
-  }
+  },
 };
 
 const MenuIntentHandler = {
