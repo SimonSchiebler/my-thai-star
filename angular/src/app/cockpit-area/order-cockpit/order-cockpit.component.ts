@@ -188,10 +188,11 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
           (element.order.paidId == 1 && value == 3) ||
           (element.order.paidId == 0 && value == 4)
         ) {
-          this.orders.splice(
-            this.orders.findIndex((el) => el.order.id == element.order.id),
-            1,
-          );
+          //this.orders.splice(
+          //  this.orders.findIndex((el) => el.order.id == element.order.id),
+          //  1,
+          //);
+          this.applyFilters();
           this.snackBarService.openSnack(this.stringInputForSnackBar(element), 5000, 'green');
           this.table.renderRows();
         }
@@ -256,10 +257,11 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
           (element.order.paidId == 1 && element.order.stateId == 3) ||
           (element.order.paidId == 0 && element.order.stateId == 4)
         ) {
-          this.orders.splice(
-            this.orders.findIndex((el) => el.order.id == element.order.id),
-            1,
-          );
+          //this.orders.splice(
+          //  this.orders.findIndex((el) => el.order.id == element.order.id),
+          //  1,
+          //);
+          this.applyFilters();
           this.snackBarService.openSnack(this.stringInputForSnackBar(element), 5000, 'green');
           this.table.renderRows();
         }

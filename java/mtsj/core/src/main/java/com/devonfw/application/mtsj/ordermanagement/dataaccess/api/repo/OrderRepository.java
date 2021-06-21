@@ -57,7 +57,7 @@ public interface OrderRepository extends DefaultRepository<OrderEntity> {
 	List<OrderEntity> findAktiveOrdersByEmail(@Param("email") String email);
 	
 	/**
-	 * @param email
+	 * @param bookingId
 	 * @return the {@link OrderEntity} objects that matched the search.
 	 */
 	@Query("SELECT orders FROM OrderEntity orders"
@@ -66,6 +66,30 @@ public interface OrderRepository extends DefaultRepository<OrderEntity> {
 			+ " OR (orders.paid.id = 1 AND orders.state != 3))") 
 	List<OrderEntity> findActiveOrdersByBookingId(@Param("bookingId") Long bookingId);
 
+	/**
+	 * @return the {@link OrderEntity} objects that matched the search.
+	 */
+	@Query("SELECT orders FROM OrderEntity orders"
+			+ " WHERE ((orders.paid.id = 0 AND orders.state != 4)" 
+			+ " OR (orders.paid.id = 1 AND orders.state != 3))") 
+	List<OrderEntity> findActiveOrders();
+	
+	
+	/**
+	 * @return the {@link OrderEntity} objects that matched the search.
+	 */
+	@Query("SELECT orders FROM OrderEntity orders"
+			+ " WHERE ((orders.paid.id = 0 AND orders.state = 4)" 
+			+ " OR (orders.paid.id = 1 AND orders.state = 3))") 
+	List<OrderEntity> findUnActiveOrders();
+	
+	
+	/**
+	 * @return the {@link OrderEntity} objects that matched the search.
+	 */
+	@Query("SELECT orders FROM OrderEntity orders") 
+	List<OrderEntity> findAllOrders();
+	
 	/**
 	 * @param criteria the {@link OrderSearchCriteriaTo} with the criteria to
 	 *                 search.
@@ -107,5 +131,5 @@ public interface OrderRepository extends DefaultRepository<OrderEntity> {
 		}
 		return QueryUtil.get().findPaginated(criteria.getPageable(), query, true);
 	}
-
+	
 }
