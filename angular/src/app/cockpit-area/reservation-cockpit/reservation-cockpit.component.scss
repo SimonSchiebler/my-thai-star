@@ -1,3 +1,9 @@
+::ng-deep .mat-select-panel-wrap {
+  flex-basis: 100%;
+  overflow-y: scroll;
+  border: solid;
+  overflow-x: hidden;
+}
 
 .mat-cell {
   text-align: center;
