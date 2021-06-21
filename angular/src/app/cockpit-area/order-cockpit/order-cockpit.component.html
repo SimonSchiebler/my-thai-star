@@ -96,12 +96,9 @@
               <mat-option [value]="0">{{ 'cockpit.table.tableNotDefinedH' | transloco }}</mat-option>
               <mat-option *ngFor="let table of tables; index as i; first as isFirst" [value]=i+1>{{i+1}}</mat-option>
             </mat-select>
-
-            
-
           </ng-container>
           <ng-container *ngIf="element.booking.delivery">
-            {{ element.booking.name }}
+            {{ 'cockpit.table.DeliveryFor' | transloco }} {{ element.booking.name }}
           </ng-container>
         </td>
       </ng-container>
@@ -209,7 +206,7 @@
       <!-- Cancel Button Column-->
       <ng-container matColumnDef="order.cancel">
         <th mat-header-cell *matHeaderCellDef>
-          {{ columns[4].label }}
+          {{ columns[5].label }}
         </th>
         <td
         mat-cell

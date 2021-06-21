@@ -264,7 +264,8 @@
       "addressLineH":"Address line",
       "tableNotDefinedH": "---",
       "idH":"Id number",
-      "waitersHelpH":"Waiters's help"
+      "waitersHelpH":"Waiters's help",
+      "DeliveryFor": "Delivery for "
     }
   },
   "aboutYou": {
