@@ -2,6 +2,7 @@ import { WaiterCockpitService } from '../services/waiter-cockpit.service';
 import { ReservationView } from '../../shared/view-models/interfaces';
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { ReservationDialogComponent } from './reservation-dialog/reservation-dialog.component';
@@ -13,6 +14,7 @@ import * as moment from 'moment';
 import { ConfigService } from '../../core/config/config.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { Subscription } from 'rxjs';
+import { OrderListView } from '../../shared/view-models/interfaces';
 
 @Component({
   selector: 'app-cockpit-reservation-cockpit',
@@ -30,10 +32,12 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
   public tables = [];
 
   @ViewChild('pagingBar', { static: true }) pagingBar: MatPaginator;
+  @ViewChild(MatTable) table: MatTable<OrderListView>;
 
   reservations: ReservationView[] = [];
   totalReservations: number;
-
+  orders: OrderListView[] = [];
+  totalOrders: number;
   columns: any[];
   displayedColumns: string[] = ['id', 'bookingDate', 'email', 'tablenumber'];
 
@@ -63,6 +67,12 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
       moment.locale(this.translocoService.getActiveLang());
     });
     this.applyFilters();
+
+    this.waiterCockpitService.getTables().subscribe((data) => {
+      this.tables = Array(data.totalElements)
+        .fill(0)
+        .map((x, i) => i);
+    });
   }
 
   setTableHeaders(lang: string): void {
@@ -132,7 +142,7 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
   }
 
   changeTableNumber(event, element) {
-   /*  element.booking.tableId = event.value;
+    element.booking.tableId = event.value;
     this.waiterCockpitService
       .changeTableNumber(element.booking)
       .subscribe((data) => {
@@ -143,7 +153,7 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
             this.totalOrders = data.totalElements;
             this.table.renderRows();
           });
-      }); */
+      }); 
   }
 
   ngOnDestroy(): void {
