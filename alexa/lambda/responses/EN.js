@@ -74,7 +74,8 @@ module.exports.messages = {
     endingPhrase: "Hope you heared something you liked",
   },
   HelpIntentHandler: {
-      helpMessage: "I currently have following commands: order food, reserve a table and whats the state of my order"
+      helpMessageHome: "I currently have following commands: order food, reserve a table and whats the state of my order.",
+      helpMessageInhouse: "I currently have following commands: order, menu, bill and waiter."
   },
   CancelAndStopIntentHandler:{
     bye:"Goodbye!"
