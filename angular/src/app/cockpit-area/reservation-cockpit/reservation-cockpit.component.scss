@@ -1,4 +1,17 @@
 
+.mat-cell {
+  text-align: center;
+  justify-content:center;
+  width: 15%;
+}
+
+.mat-header-cell {
+  flex-direction: column;
+  justify-content: center;
+  width: 15%;
+  font-weight: bold;
+}
+
 .MatSelectorClass {
     flex-basis: 100%;
     overflow-x: hidden;
@@ -11,7 +24,7 @@
   padding: 10px;
 }
 
-::ng-deep .mat-select- {
+::ng-deep .mat-select-panel {
   flex-basis: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
