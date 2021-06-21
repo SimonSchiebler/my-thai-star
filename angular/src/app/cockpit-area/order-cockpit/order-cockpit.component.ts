@@ -60,6 +60,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
     stateId: undefined,
     archive: false,
     order_cockpit: true,
+    delivery: undefined
   };
 
   stateNames = [];
@@ -76,8 +77,6 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
     this.pageSizes = this.configService.getValues().pageSizes;
   }
 
-   //string part for SuccessBar
-   stringpart:string;
 
   ngOnInit(): void {
 
@@ -95,7 +94,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
         .map((x, i) => i);
     });
 
-    this.intervalService.setInterval(5000,() => this.waiterCockpitService.getOrders(this.pageable, this.sorting, this.filters).subscribe((data: any) => {
+    this.intervalService.setInterval(60000,() => this.waiterCockpitService.getOrders(this.pageable, this.sorting, this.filters).subscribe((data: any) => {
       this.orders = data.content;  
       this.totalOrders = data.totalElements;
     }));
@@ -181,21 +180,24 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
   }
 
 
-  changeOrderState(event, element) {
+  changeOrderState(value, element) {
+    element.order.stateId = value;
     this.waiterCockpitService
-      .updateOrder({ id: element.order.id, stateId: event.value })
+      .updateOrder({ id: element.order.id, stateId: value})
       .subscribe((data) => {
         if (
-          (element.order.paidId == 1 && event.value == 3) ||
-          (element.order.paidId == 0 && event.value == 4)
+          (element.order.paidId == 1 && value == 3) ||
+          (element.order.paidId == 0 && value == 4)
         ) {
-          this.orders.splice(
-            this.orders.findIndex((el) => el.order.id == element.order.id),
-            1,
-          );
+          //this.orders.splice(
+          //  this.orders.findIndex((el) => el.order.id == element.order.id),
+          //  1,
+          //);
+          this.applyFilters();
+          this.snackBarService.openSnack(this.stringInputForSnackBar(element), 5000, 'green');
           this.table.renderRows();
         }
-      }); 
+      });
   }
 
 
@@ -211,21 +213,6 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
       + this.translocoService.translate('cockpit.orders.snackbarEnd') ; 
     }
     return temp;
-  }
-
-  changeTableNumber(event, element) {
-    element.booking.tableId = event.value;
-    this.waiterCockpitService
-      .changeTableNumber(element.booking)
-      .subscribe((data) => {
-        this.waiterCockpitService
-          .getOrders(this.pageable, this.sorting, this.filters)
-          .subscribe((data: any) => {
-            this.orders = data.content;
-            this.totalOrders = data.totalElements;
-            this.table.renderRows();
-          });
-      });
   }
 
   resetWaitersHelp(element) {   
@@ -255,12 +242,14 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
         if (
           (element.order.paidId == 1 && element.order.stateId == 3) ||
           (element.order.paidId == 0 && element.order.stateId == 4)
-        ) {
-          this.orders.splice(
-            this.orders.findIndex((el) => el.order.id == element.order.id),
-            1,
-          );
+        ) {         
+          this.applyFilters();
+          this.snackBarService.openSnack(this.stringInputForSnackBar(element), 5000, 'green');
           this.table.renderRows();
+        }
+
+        if(event.checked){
+          this.resetWaitersHelp(element);
         }
       });
   }
@@ -274,5 +263,6 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.translocoSubscription.unsubscribe();
+    this.intervalService.clearInterval();
   }
 }

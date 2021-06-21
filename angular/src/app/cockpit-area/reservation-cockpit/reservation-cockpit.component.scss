@@ -1,3 +1,42 @@
+::ng-deep .mat-select-panel-wrap {
+  flex-basis: 100%;
+  overflow-y: scroll;
+  border: solid;
+  overflow-x: hidden;
+}
+
+.mat-cell {
+  text-align: center;
+  justify-content:center;
+  width: 15%;
+}
+
+.mat-header-cell {
+  flex-direction: column;
+  justify-content: center;
+  width: 15%;
+  font-weight: bold;
+}
+
+.MatSelectorClass {
+    flex-basis: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border: grey;
+}
+
+.mat-select {
+  width: 20%;
+  padding: 10px;
+}
+
+::ng-deep .mat-select-panel {
+  flex-basis: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  border: grey;
+}
+
 .formRow {
   box-sizing: border-box;
   display: flex;
@@ -50,6 +89,7 @@ td:not(:nth-child(1)) {
 .noResults {
   padding: 16px;
 }
+
 
 @media (max-width: 599px) {
   .forDesktop {

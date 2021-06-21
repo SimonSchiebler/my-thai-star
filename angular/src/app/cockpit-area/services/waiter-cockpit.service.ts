@@ -38,6 +38,8 @@ export class WaiterCockpitService {
     'bookingmanagement/v1/table/search';
   private readonly updateWaitersHelp: string =
     'bookingmanagement/v1/booking/updateWaitersHelp';
+  private readonly deleteBookingPath: string =
+  'bookingmanagement/v1/booking'
   private readonly restServiceRoot$: Observable<string> =
     this.config.getRestServiceRoot();
 
@@ -139,6 +141,15 @@ export class WaiterCockpitService {
     );
   }
 
+  deleteBooking(id: number) : Observable<any> {
+    let path: string = this.deleteBookingPath;
+    return this.restServiceRoot$.pipe(
+      exhaustMap((restServiceRoot) => 
+        this.http.delete<BookingView>(`${restServiceRoot}${path}/${id}`),
+      ),
+    );
+  }
+  
   orderComposer(orderList: OrderView[]): OrderView[] {
     const orders: OrderView[] = cloneDeep(orderList);
     map(orders, (o: OrderViewResult) => {

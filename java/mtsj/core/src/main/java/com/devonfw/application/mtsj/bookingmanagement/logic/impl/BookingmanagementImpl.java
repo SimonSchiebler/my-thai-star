@@ -226,6 +226,14 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
 
     List<InvitedGuestEntity> invited = getBeanMapper().mapList(booking.getInvitedGuests(), InvitedGuestEntity.class);
 
+	if(booking.getBooking().getDelivery() == null) {		
+		if(getOrderDao().find(booking.getBooking().getOrderId()).getAddress() != null) {
+			booking.getBooking().setDelivery(true);
+		} else {
+			booking.getBooking().setDelivery(false);
+		}
+	}
+
     for (InvitedGuestEntity invite : invited) {
       try {
         invite.setGuestToken(buildToken(invite.getEmail(), "GB_"));

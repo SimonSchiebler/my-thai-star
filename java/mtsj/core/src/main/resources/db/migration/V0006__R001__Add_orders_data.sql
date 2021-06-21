@@ -7,7 +7,7 @@ INSERT INTO OrderState (id,modificationCounter,stateName) VALUES (4,0,'canceled'
 INSERT INTO OrderPaid (id,modificationCounter,paidName) VALUES (0,0,'unpaid');
 INSERT INTO OrderPaid (id,modificationCounter,paidName) VALUES (1,0,'paid');
 
-INSERT INTO AddressTable (id,modificationCounter,stateOrRegion,city,countryCode,postalCode,addressLine1,addressLine2,addressLine3,districtOrCounty) VALUES (0,0,'WA','Seattle','US','98109','410 Terry Ave North',' ','aeiou',' ');
+INSERT INTO AddressTable (id,modificationCounter,stateOrRegion,city,countryCode,postalCode,addressLine1,addressLine2,addressLine3,districtOrCounty) VALUES (0,0,'WA','Seattle','US','98109','410','Terry','Ave North',' ');
 INSERT INTO AddressTable (id,modificationCounter,stateOrRegion,city,countryCode,postalCode,addressLine1,addressLine2,addressLine3,districtOrCounty) VALUES (1,0,'NYS','New York','US','10125','Bedell PI',' ',' ',' ');;
 
 INSERT INTO Orders (id,idState,idPaid, modificationCounter, idBooking, idInvitedGuest, idHost, idAddress, orderToken) VALUES (0,0,1, 1, 0, null, 0, null, 'OR_dbg1');

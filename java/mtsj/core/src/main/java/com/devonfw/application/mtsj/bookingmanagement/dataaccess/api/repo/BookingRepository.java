@@ -52,6 +52,7 @@ public interface BookingRepository extends DefaultRepository<BookingEntity> {
   @Query("SELECT booking FROM BookingEntity booking" + " WHERE booking.id = :bookingId")
   List<BookingEntity> findBookingById(@Param("bookingId") Long bookingId);
 
+
   /**
    * @param criteria the {@link BookingSearchCriteriaTo} with the criteria to search.
    * @return the {@link Page} of the {@link BookingEntity} objects that matched the search.
@@ -61,6 +62,10 @@ public interface BookingRepository extends DefaultRepository<BookingEntity> {
     BookingEntity alias = newDslAlias();
     JPAQuery<BookingEntity> query = newDslQuery(alias);
 
+	Boolean delivery = criteria.getDelivery();
+	if ((delivery != null)) {
+		query.where(Alias.$(alias.getDelivery()).eq(delivery));
+	}
     String name = criteria.getName();
     if ((name != null) && !name.isEmpty()) {
       QueryUtil.get().whereString(query, $(alias.getName()), name, criteria.getNameOption());

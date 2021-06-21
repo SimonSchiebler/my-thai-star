@@ -24,6 +24,7 @@ import { By } from '@angular/platform-browser';
 import { click } from '../../shared/common/test-utils';
 import { ReservationCockpitComponent } from './reservation-cockpit.component';
 import { reservation } from '../../../in-memory-test-data/db-reservation';
+import { tableData } from '../../../in-memory-test-data/db-table';
 import { ascSortReservation } from '../../../in-memory-test-data/db-reservation.-asc-sort';
 
 const mockDialog = {
@@ -47,6 +48,9 @@ const waiterCockpitServiceStub = {
   getReservations: jasmine
     .createSpy('getReservations')
     .and.returnValue(of(reservation)),
+  getTables: jasmine
+    .createSpy('getTables')
+    .and.returnValue(of(tableData)),
 };
 
 const waiterCockpitServiceSortStub = {
