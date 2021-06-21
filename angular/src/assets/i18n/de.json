@@ -259,12 +259,13 @@
       "ownerH": "Besitzer",
       "tablenumberH": "Tischnummer",
       "creationDateH": "Erstelldatum",
-      "postCodeH":"Postleitzahl",
-      "cityH":"Stadt",
-      "addressLineH":"Adresse",
+      "postCodeH": "Postleitzahl",
+      "cityH": "Stadt",
+      "addressLineH": "Adresse",
       "tableNotDefinedH": "---",
-      "idH":"Id",
-      "waitersHelpH":"Hilfe von Kellner"
+      "idH": "Id",
+      "waitersHelpH": "Tisch benötigt",
+      "DeliveryFor": "Lieferung an "
     }
   },
   "aboutYou": {
