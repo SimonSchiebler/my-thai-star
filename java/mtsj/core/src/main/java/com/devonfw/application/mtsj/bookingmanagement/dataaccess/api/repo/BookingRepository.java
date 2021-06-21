@@ -42,7 +42,7 @@ public interface BookingRepository extends DefaultRepository<BookingEntity> {
    * @return the {@link BookingEntity} objects that matched the search.
    */
   @Query("SELECT booking FROM BookingEntity booking"
-      + " WHERE booking.table.id = :tableId   AND booking.bookingDate < CURRENT_DATE ")
+      + " WHERE booking.table.id = :tableId ORDER BY booking.bookingDate DESC")
   List<BookingEntity> findActiveBookingByTableId(@Param("tableId") Long tableId);
 
   /**
