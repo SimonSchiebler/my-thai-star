@@ -58,9 +58,11 @@ body {
 
 .cdk-overlay-pane {
   overflow-y: auto;
+  //temporary 
+  //overflow-x: hidden;
 }
 
-mat-card {
+  mat-card {
   padding: 0;
   margin: 8px;
 }

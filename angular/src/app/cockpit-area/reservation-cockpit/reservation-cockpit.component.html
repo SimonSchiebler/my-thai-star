@@ -61,14 +61,16 @@
             *matCellDef="let element"
             (click)="$event.stopPropagation()"
             >
-              <mat-select
-              panelClass="mat-select-panel"
+
+              <mat-select 
+              panelClass="MatSelectorClass"
               (selectionChange)="changeTableNumber($event, element)"
               [(ngModel)]="element.booking.tableId"
               >
                 <mat-option [value]="0">{{ 'cockpit.table.tableNotDefinedH' | transloco }}</mat-option>
                 <mat-option *ngFor="let table of tables; index as i; first as isFirst" [value]=i+1>{{i+1}}</mat-option>
               </mat-select>
+
             </td>
           </ng-container>
 

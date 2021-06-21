@@ -1,3 +1,23 @@
+
+.MatSelectorClass {
+    flex-basis: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border: grey;
+}
+
+.mat-select {
+  width: 20%;
+  padding: 10px;
+}
+
+::ng-deep .mat-select- {
+  flex-basis: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  border: grey;
+}
+
 .formRow {
   box-sizing: border-box;
   display: flex;
@@ -51,10 +71,6 @@ td:not(:nth-child(1)) {
   padding: 16px;
 }
 
-.mat-select-panel {
-  background: red;
-  //for Testing red
-}
 
 @media (max-width: 599px) {
   .forDesktop {
