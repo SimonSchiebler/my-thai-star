@@ -83,6 +83,12 @@ public class BookingmanagementRestServiceImpl implements BookingmanagementRestSe
   }
 
   @Override
+  public TableEto getTableByDeviceId(String id) {
+
+    return this.bookingmanagement.findTableByDeviceId(id);
+  }
+
+  @Override
   public TableEto saveTable(TableEto table) {
 
     return this.bookingmanagement.saveTable(table);

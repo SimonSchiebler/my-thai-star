@@ -136,6 +136,14 @@ public interface Bookingmanagement {
   TableEto findTable(Long id);
 
   /**
+   * Returns a Table by its id 'id'.
+   *
+   * @param id The id 'id' of the Table.
+   * @return The {@link TableEto} with id 'id'
+   */
+  TableEto findTableByDeviceId(String id);
+
+  /**
    * Returns a paginated list of Tables matching the search criteria.
    *
    * @param criteria the {@link TableSearchCriteriaTo}.

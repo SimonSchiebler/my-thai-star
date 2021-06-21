@@ -94,7 +94,8 @@ public abstract class BaseWebSecurityConfig extends WebSecurityConfigurerAdapter
     "/services/rest/bookingmanagement/v1/invitedguest/accept/**",
     "/services/rest/bookingmanagement/v1/invitedguest/decline/**",
     "/services/rest/bookingmanagement/v1/booking/updateWaitersHelp",
-    "/services/rest/bookingmanagement/v1/booking/getBookingByDeviceId/*" };
+    "/services/rest/bookingmanagement/v1/booking/getBookingByDeviceId/*",
+    "/services/rest/bookingmanagement/v1/table/getTableByDeviceId/*" };
 
     http.userDetailsService(this.userDetailsService).csrf().disable().exceptionHandling().and().sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()

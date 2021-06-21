@@ -141,6 +141,16 @@ public interface BookingmanagementRestService {
   public TableEto getTable(@PathParam("id") long id);
 
   /**
+   * Delegates to {@link Bookingmanagement#findTable}.
+   *
+   * @param id the ID of the {@link TableEto}
+   * @return the {@link TableEto}
+   */
+  @GET
+  @Path("/table/getTableByDeviceId/{id}/")
+  public TableEto getTableByDeviceId(@PathParam("id") String id);
+
+  /**
    * Delegates to {@link Bookingmanagement#saveTable}.
    *
    * @param table the {@link TableEto} to be saved

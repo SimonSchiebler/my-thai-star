@@ -382,6 +382,13 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
   }
 
   @Override
+  public TableEto findTableByDeviceId(String id) {
+
+    LOG.debug("Get Table with id {} from database.", id);
+    return getBeanMapper().map(getTableDao().findTablesByDeviceId(id).get(0), TableEto.class);
+  }
+
+  @Override
   public Page<TableEto> findTableEtos(TableSearchCriteriaTo criteria) {
 
     Page<TableEntity> tables = getTableDao().findTables(criteria);
