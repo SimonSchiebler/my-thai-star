@@ -3,6 +3,8 @@ package com.devonfw.application.mtsj.bookingmanagement.logic.api;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import javax.ws.rs.PathParam;
+
 import org.springframework.data.domain.Page;
 
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.BookingCto;
@@ -13,7 +15,6 @@ import com.devonfw.application.mtsj.bookingmanagement.common.api.to.InvitedGuest
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.TableEto;
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.TableSearchCriteriaTo;
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.WaitersHelpCriteriaTo;
-import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderEto;
 
 /**
  * Interface for Bookingmanagement component.
@@ -35,6 +36,14 @@ public interface Bookingmanagement {
    * @return The {@link BookingCto}
    */
   BookingCto findBookingByToken(String token);
+
+  /**
+   * Returns Booking by DeviceId
+   *
+   * @param token
+   * @return The {@link BookingCto}
+   */
+  BookingEto findBookingByDeviceId(@PathParam("id") String id);
 
   /**
    * Returns InvitedGuest by Token

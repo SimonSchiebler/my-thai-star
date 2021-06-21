@@ -1,7 +1,5 @@
 package com.devonfw.application.mtsj.bookingmanagement.service.impl.rest;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.Valid;
@@ -19,117 +17,123 @@ import com.devonfw.application.mtsj.bookingmanagement.common.api.to.TableSearchC
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.WaitersHelpCriteriaTo;
 import com.devonfw.application.mtsj.bookingmanagement.logic.api.Bookingmanagement;
 import com.devonfw.application.mtsj.bookingmanagement.service.api.rest.BookingmanagementRestService;
-import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderEto;
 
 /**
- * The service implementation for REST calls in order to execute the logic of
- * component {@link Bookingmanagement}.
+ * The service implementation for REST calls in order to execute the logic of component {@link Bookingmanagement}.
  */
 @Named("BookingmanagementRestService")
 @Validated
 public class BookingmanagementRestServiceImpl implements BookingmanagementRestService {
 
-	@Inject
-	private Bookingmanagement bookingmanagement;
+  @Inject
+  private Bookingmanagement bookingmanagement;
 
-	@Override
-	public BookingCto getBooking(long id) {
+  @Override
+  public BookingCto getBooking(long id) {
 
-		return this.bookingmanagement.findBooking(id);
-	}
+    return this.bookingmanagement.findBooking(id);
+  }
 
-	@Override
-	public BookingEto saveBooking(@Valid BookingCto booking) {
+  @Override
+  public BookingEto saveBooking(@Valid BookingCto booking) {
 
-		return this.bookingmanagement.saveBooking(booking);
-	}
+    return this.bookingmanagement.saveBooking(booking);
+  }
 
-	@Override
-	public void deleteBooking(long id) {
+  @Override
+  public void deleteBooking(long id) {
 
-		this.bookingmanagement.deleteBooking(id);
-	}
+    this.bookingmanagement.deleteBooking(id);
+  }
 
-	@Override
-	public Page<BookingCto> findBookingsByPost(BookingSearchCriteriaTo searchCriteriaTo) {
+  @Override
+  public Page<BookingCto> findBookingsByPost(BookingSearchCriteriaTo searchCriteriaTo) {
 
-		return this.bookingmanagement.findBookingsByPost(searchCriteriaTo);
-	}
+    return this.bookingmanagement.findBookingsByPost(searchCriteriaTo);
+  }
 
-	@Override
-	public InvitedGuestEto getInvitedGuest(long id) {
+  @Override
+  public InvitedGuestEto getInvitedGuest(long id) {
 
-		return this.bookingmanagement.findInvitedGuest(id);
-	}
+    return this.bookingmanagement.findInvitedGuest(id);
+  }
 
-	@Override
-	public InvitedGuestEto saveInvitedGuest(InvitedGuestEto invitedguest) {
+  @Override
+  public InvitedGuestEto saveInvitedGuest(InvitedGuestEto invitedguest) {
 
-		return this.bookingmanagement.saveInvitedGuest(invitedguest);
-	}
+    return this.bookingmanagement.saveInvitedGuest(invitedguest);
+  }
 
-	@Override
-	public void deleteInvitedGuest(long id) {
+  @Override
+  public void deleteInvitedGuest(long id) {
 
-		this.bookingmanagement.deleteInvitedGuest(id);
-	}
+    this.bookingmanagement.deleteInvitedGuest(id);
+  }
 
-	@Override
-	public Page<InvitedGuestEto> findInvitedGuestsByPost(InvitedGuestSearchCriteriaTo searchCriteriaTo) {
+  @Override
+  public Page<InvitedGuestEto> findInvitedGuestsByPost(InvitedGuestSearchCriteriaTo searchCriteriaTo) {
 
-		return this.bookingmanagement.findInvitedGuestEtos(searchCriteriaTo);
-	}
+    return this.bookingmanagement.findInvitedGuestEtos(searchCriteriaTo);
+  }
 
-	@Override
-	public TableEto getTable(long id) {
+  @Override
+  public TableEto getTable(long id) {
 
-		return this.bookingmanagement.findTable(id);
-	}
+    return this.bookingmanagement.findTable(id);
+  }
 
-	@Override
-	public TableEto saveTable(TableEto table) {
+  @Override
+  public TableEto saveTable(TableEto table) {
 
-		return this.bookingmanagement.saveTable(table);
-	}
+    return this.bookingmanagement.saveTable(table);
+  }
 
-	@Override
-	public void deleteTable(long id) {
+  @Override
+  public void deleteTable(long id) {
 
-		this.bookingmanagement.deleteTable(id);
-	}
+    this.bookingmanagement.deleteTable(id);
+  }
 
-	@Override
-	public Page<TableEto> findTablesByPost(TableSearchCriteriaTo searchCriteriaTo) {
+  @Override
+  public Page<TableEto> findTablesByPost(TableSearchCriteriaTo searchCriteriaTo) {
 
-		return this.bookingmanagement.findTableEtos(searchCriteriaTo);
-	}
+    return this.bookingmanagement.findTableEtos(searchCriteriaTo);
+  }
 
-	@Override
-	public InvitedGuestEto acceptInvite(String guestToken) {
+  @Override
+  public InvitedGuestEto acceptInvite(String guestToken) {
 
-		return this.bookingmanagement.acceptInvite(guestToken);
-	}
+    return this.bookingmanagement.acceptInvite(guestToken);
+  }
 
-	@Override
-	public InvitedGuestEto declineInvite(String guestToken) {
+  @Override
+  public InvitedGuestEto declineInvite(String guestToken) {
 
-		return this.bookingmanagement.declineInvite(guestToken);
-	}
+    return this.bookingmanagement.declineInvite(guestToken);
+  }
 
-	@Override
-	public void cancelInvite(String bookingToken) {
+  @Override
+  public void cancelInvite(String bookingToken) {
 
-		this.bookingmanagement.cancelInvite(bookingToken);
-	}
-	
-	@Override
-	public BookingEto updateTableNumber(BookingEto booking) {
-		return this.bookingmanagement.updateTableNumber(booking);
-	}
-	
+    this.bookingmanagement.cancelInvite(bookingToken);
+  }
 
-	public BookingEto updateWaitersHelp(WaitersHelpCriteriaTo searchCriteriaTo) {
-		return this.bookingmanagement.updateWaitersHelp(searchCriteriaTo);
-	}
+  @Override
+  public BookingEto updateTableNumber(BookingEto booking) {
+
+    return this.bookingmanagement.updateTableNumber(booking);
+  }
+
+  @Override
+  public BookingEto updateWaitersHelp(WaitersHelpCriteriaTo searchCriteriaTo) {
+
+    return this.bookingmanagement.updateWaitersHelp(searchCriteriaTo);
+  }
+
+  @Override
+  public BookingEto getBookingByDeviceId(String id) {
+
+    return this.bookingmanagement.findBookingByDeviceId(id);
+  }
 
 }

@@ -1,7 +1,5 @@
 package com.devonfw.application.mtsj.bookingmanagement.service.api.rest;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,7 +21,6 @@ import com.devonfw.application.mtsj.bookingmanagement.common.api.to.TableEto;
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.TableSearchCriteriaTo;
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.WaitersHelpCriteriaTo;
 import com.devonfw.application.mtsj.bookingmanagement.logic.api.Bookingmanagement;
-import com.devonfw.application.mtsj.ordermanagement.common.api.to.OrderEto;
 
 /**
  * The service interface for REST calls in order to execute the logic of component {@link Bookingmanagement}.
@@ -42,6 +39,16 @@ public interface BookingmanagementRestService {
   @GET
   @Path("/booking/{id}/")
   public BookingCto getBooking(@PathParam("id") long id);
+
+  /**
+   * Delegates to {@link Bookingmanagement#findBookingByDeviceId}.
+   *
+   * @param id the ID of the {@link BookingEto}
+   * @return the {@link BookingEto}
+   */
+  @GET
+  @Path("/booking/getBookingByDeviceId/{id}")
+  public BookingEto getBookingByDeviceId(@PathParam("id") String id);
 
   /**
    * Delegates to {@link Bookingmanagement#saveBooking}.
@@ -161,7 +168,7 @@ public interface BookingmanagementRestService {
   @Path("/table/search")
   @POST
   public Page<TableEto> findTablesByPost(TableSearchCriteriaTo searchCriteriaTo);
-  
+
   /**
    * Delegates to {@link Bookingmanagement#updateTableNumber}.
    *
@@ -171,7 +178,7 @@ public interface BookingmanagementRestService {
   @POST
   @Path("/booking/updateTable")
   public BookingEto updateTableNumber(BookingEto booking);
-  
+
   /**
    * Delegates to {@link Bookingmanagement#updateWaitersHelp}.
    *
