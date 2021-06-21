@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminCockpitComponent } from './cockpit-area/admin-cockpit/admin-cockpit.component';
+import { DeviceAdministrationComponent } from './cockpit-area/admin-cockpit/device-administration/device-administration.component';
+
 import { BookTableComponent } from './book-table/container/book-table/book-table.component';
 import { OrderCockpitComponent } from './cockpit-area/order-cockpit/order-cockpit.component';
 import { OrderArchiveCockpitComponent } from './cockpit-area/order-archive-cockpit/order-archive-cockpit.component';
@@ -48,6 +50,11 @@ const appRoutes: Routes = [
   {
     path: 'admin',
     component: AdminCockpitComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'devices',
+    component: DeviceAdministrationComponent,
     canActivate: [AuthGuardService],
   },
 
