@@ -39,9 +39,25 @@ table {
   min-width: 600px;
 }
 
-th {
-  width: 16,66%;
+.mat-cell {
+  text-align: center;
+  justify-content:center;
+  width: 15%;
+}
+
+.mat-header-cell {
+  flex-direction: column;
+  justify-content: center;
+  width: 15%;
   font-weight: bold;
+}
+
+
+
+::ng-deep .mat-sort-header-container {
+  display:flex;
+  justify-content:center;
+
 }
 
 td:not(:nth-child(1)) {

@@ -70,6 +70,7 @@
 </mat-progress-bar>
 
 <mat-card>
+  <mat-card-content>
   <mat-card-title>{{ 'cockpit.orders.title' | transloco }}</mat-card-title>
   <mat-divider></mat-divider>
 
@@ -198,7 +199,7 @@
 
       <!-- Cancel Button Column-->
       <ng-container matColumnDef="order.cancel">
-        <th mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ columns[5].label }}
         </th>
         <td
@@ -238,4 +239,5 @@
     (page)="page($event)"
   >
   </mat-paginator>
+  </mat-card-content>
 </mat-card>
