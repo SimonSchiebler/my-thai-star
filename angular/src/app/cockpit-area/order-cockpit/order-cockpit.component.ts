@@ -213,21 +213,6 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
     return temp;
   }
 
-  changeTableNumber(event, element) {
-    element.booking.tableId = event.value;
-    this.waiterCockpitService
-      .changeTableNumber(element.booking)
-      .subscribe((data) => {
-        this.waiterCockpitService
-          .getOrders(this.pageable, this.sorting, this.filters)
-          .subscribe((data: any) => {
-            this.orders = data.content;
-            this.totalOrders = data.totalElements;
-            this.table.renderRows();
-          });
-      });
-  }
-
   resetWaitersHelp(element) {   
     this.waiterCockpitService
       .resetWaitersHelp({

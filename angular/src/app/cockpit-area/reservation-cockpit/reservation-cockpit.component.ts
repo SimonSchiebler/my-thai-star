@@ -27,6 +27,7 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
     pageNumber: 0,
     // total: 1,
   };
+  public tables = [];
 
   @ViewChild('pagingBar', { static: true }) pagingBar: MatPaginator;
 
@@ -128,6 +129,21 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
       width: '80%',
       data: selection,
     });
+  }
+
+  changeTableNumber(event, element) {
+   /*  element.booking.tableId = event.value;
+    this.waiterCockpitService
+      .changeTableNumber(element.booking)
+      .subscribe((data) => {
+        this.waiterCockpitService
+          .getOrders(this.pageable, this.sorting, this.filters)
+          .subscribe((data: any) => {
+            this.orders = data.content;
+            this.totalOrders = data.totalElements;
+            this.table.renderRows();
+          });
+      }); */
   }
 
   ngOnDestroy(): void {
