@@ -1,6 +1,6 @@
 module.exports.messages = {
   LaunchRequestHandler: {
-    sppechoutput:
+    spechoutput:
       "Welcome to My Thai Star. If you want to know what i can do for you please say Help",
   },
   ReserveIntentHandler: {
@@ -27,8 +27,8 @@ module.exports.messages = {
       "I'm Sorry to hear that. If you want to make a new Order please call the My Thai Star Skill again.",
     buildCurrentOrderContents: (orders) => {
       var speakOutput = "Your Order is: ";
-      speakOutput += order
-        .map((order) => `${order.amount} times the ${order.dish.name}. `)
+      speakOutput += orders
+        .map((orders) => `${orders.amount} times the ${orders.dish.name}. `)
         .join("");
       return (speakOutput += "Is that correct?");
     },
@@ -36,12 +36,12 @@ module.exports.messages = {
   OrderStateHandler: {
     buildOpenOrders: (orders) => {
       let res =
-        "you currently have " + orders.content.length + " open orders. \n";
+        "you currently have " + orders.length + " open orders. \n";
       const states = ["ordered", "preperation", "delivery"];
       for (const order of orders) {
         state = states[order.orders[0].stateId];
         var t = new Date(1970, 0, 1);
-        t.setSeconds(parseInt(orders.content[i].creationDate) + 7200);
+        t.setSeconds(parseInt(order.creationDate) + 7200);
         var date =
           t.toDateString() + " at " + t.getHours() + ":" + t.getMinutes();
         res +=

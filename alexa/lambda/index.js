@@ -10,16 +10,15 @@ let responsesEN = require("./responses/EN");
 
 const getResponseObject = (requestEnvelope) =>{
   //TODO select based on lang
-  //switch (requestEnvelope.something)
-  //{
-  //case DE:
-  //  return responsesDE;
-  //case EN:
-  //  return responsesEN;
-  //default:
-  //  return responsesDE;
-  //}
-  return responsesDE;
+  switch (requestEnvelope.request.locale)
+  {
+  case "de-DE":
+    return responsesDE.messages;
+  case "en-US":
+    return responsesEN.messages;
+  default:
+    return responsesEN.messages;
+  }
 }
 
 const PERMISSIONS = [
@@ -37,7 +36,7 @@ const LaunchRequestHandler = {
   },
   async handle(handlerInput) {
     const messages = getResponseObject(handlerInput.requestEnvelope).LaunchRequestHandler;
-    const speakOutput = messages.sppechoutput;
+    const speakOutput = messages.spechoutput;
     return handlerInput.responseBuilder
       .speak(speakOutput)
       .reprompt(speakOutput)
@@ -73,7 +72,7 @@ const ReserveIntentHandler = {
         break;
       case "setWantsToOrder":
         sessionAttributes.wantsToOrder =
-          handlerInput.requestEnvelope.request.intent.slots.wantsToOrder.value;
+          handlerInput.requestEnvelope.request.intent.slots.wantsToOrder.resolutions.resolutionsPerAuthority[0].values[0].value.name;
         break;
       default:
         break;
@@ -163,10 +162,6 @@ const OrderIntentHandler = {
           handlerInput.requestEnvelope.request.intent.slots.dish.resolutions
             .resolutionsPerAuthority[0].values
         ) {
-          if (handlerInput.requestEnvelope.request.intent.slots.amount.value) {
-            sessionAttributes.amount =
-              handlerInput.requestEnvelope.request.intent.slots.amount.value;
-          }
           sessionAttributes.dish =
             handlerInput.requestEnvelope.request.intent.slots.dish.resolutions.resolutionsPerAuthority[0].values[0].value;
         } else {
@@ -182,7 +177,7 @@ const OrderIntentHandler = {
         break;
       case "setCompletedOrder":
         sessionAttributes.oneMoreOrder =
-          handlerInput.requestEnvelope.request.intent.slots.completedOrder.value;
+          handlerInput.requestEnvelope.request.intent.slots.completedOrder.resolutions.resolutionsPerAuthority[0].values[0].value.name;
         break;
       default:
         break;
@@ -291,7 +286,7 @@ const OrderIntentHandler = {
       oneMoreOrder === "no"
     ) {
       if (
-        handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
+        handlerInput.requestEnvelope.request.intent.slots.confirmation.resolutions.resolutionsPerAuthority[0].values[0].value.name ===
           "yes" &&
         handlerInput.requestEnvelope.request.intent.slots.correct.value ===
           undefined
@@ -304,10 +299,10 @@ const OrderIntentHandler = {
           .getResponse();
       } else if (
         (handlerInput.requestEnvelope.request.intent.slots.confirmation
-          .value === "yes" &&
-          handlerInput.requestEnvelope.request.intent.slots.correct.value ===
+          .resolutions.resolutionsPerAuthority[0].values[0].value.name === "yes" &&
+          handlerInput.requestEnvelope.request.intent.slots.correct.resolutions.resolutionsPerAuthority[0].values[0].value.name ===
             "yes") ||
-        handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
+        handlerInput.requestEnvelope.request.intent.slots.confirmation.resolutions.resolutionsPerAuthority[0].values[0].value.name ===
           "no"
       ) {
         if (sessionAttributes.wantsToOrder === undefined) {
@@ -341,9 +336,9 @@ const OrderIntentHandler = {
             .getResponse();
         }
       } else if (
-        handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
+        handlerInput.requestEnvelope.request.intent.slots.confirmation.resolutions.resolutionsPerAuthority[0].values[0].value.name ===
           "yes" &&
-        handlerInput.requestEnvelope.request.intent.slots.correct.value === "no"
+        handlerInput.requestEnvelope.request.intent.slots.correct.resolutions.resolutionsPerAuthority[0].values[0].value.name === "no"
       ) {
         return handlerInput.responseBuilder
           .speak(
@@ -422,7 +417,7 @@ const BillIntentHandler = {
     await util.setWaiterState(1, deviceId);
 
     return handlerInput.responseBuilder
-      .speak(message.billRequested)
+      .speak(messages.billRequested)
       .getResponse();
   }
 };
@@ -463,7 +458,7 @@ const MenuIntentHandler = {
         .speak(speakOutput)
         .getResponse();
     } else if (
-      handlerInput.requestEnvelope.request.intent.slots.hearMore.value === "yes"
+      handlerInput.requestEnvelope.request.intent.slots.hearMore.resolutions.resolutionsPerAuthority[0].values[0].value.name === "yes"
     ) {
       const dishes = await util.getDishes(size, page);
       page++;
@@ -488,14 +483,14 @@ const MenuIntentHandler = {
         for (i = 0; i < dishes.content.length; i++) {
           speakOutput += dishes.content[i].dish.name + ", ";
         }
-        speakOutput += message.askMoreDishes;
+        speakOutput += messages.askMoreDishes;
         return handlerInput.responseBuilder
           .addElicitSlotDirective("hearMore")
           .speak(speakOutput)
           .getResponse();
       }
     } else if (
-      handlerInput.requestEnvelope.request.intent.slots.hearMore.value === "no"
+      handlerInput.requestEnvelope.request.intent.slots.hearMore.resolutions.resolutionsPerAuthority[0].values[0].value.name === "no"
     ) {
       return handlerInput.responseBuilder
         .speak(messages.endingPhrase)
@@ -515,7 +510,7 @@ const HelpIntentHandler = {
     const messages = getResponseObject(handlerInput.requestEnvelope).HelpIntentHandler;
 
     return handlerInput.responseBuilder
-      .speak(messages.helpMessage)
+      .speak(messages.helpMessageHome)
       .getResponse();
   },
 };
