@@ -95,7 +95,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
         .map((x, i) => i);
     });
 
-    this.intervalService.setInterval(5000,() => this.waiterCockpitService.getOrders(this.pageable, this.sorting, this.filters).subscribe((data: any) => {
+    this.intervalService.setInterval(60000,() => this.waiterCockpitService.getOrders(this.pageable, this.sorting, this.filters).subscribe((data: any) => {
       this.orders = data.content;  
       this.totalOrders = data.totalElements;
     }));
@@ -181,13 +181,14 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
   }
 
 
-  changeOrderState(event, element) {
+  changeOrderState(value, element) {
+    element.order.stateId = value;
     this.waiterCockpitService
-      .updateOrder({ id: element.order.id, stateId: event.value })
+      .updateOrder({ id: element.order.id, stateId: value})
       .subscribe((data) => {
         if (
-          (element.order.paidId == 1 && event.value == 3) ||
-          (element.order.paidId == 0 && event.value == 4)
+          (element.order.paidId == 1 && value == 3) ||
+          (element.order.paidId == 0 && value == 4)
         ) {
           this.orders.splice(
             this.orders.findIndex((el) => el.order.id == element.order.id),
@@ -195,7 +196,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
           );
           this.table.renderRows();
         }
-      }); 
+      });
   }
 
 

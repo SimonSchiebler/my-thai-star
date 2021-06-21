@@ -135,25 +135,35 @@
         (click)="$event.stopPropagation()"
         >
           <!-- decrement -->
-          <ng-template  *ngIf="element.order.stateId != 0;then enabled else disabled"> </ng-template >
-          <ng-template  #enabled> 
-            <button mat-button (click)="changeOrderState(element.order.stateId-1, element)"> 
-              <mat-icon>chevron_left</mat-icon>
-            </button>
-          </ng-template >
-          <ng-template  #disabled> 
-            <button mat-button disabled> 
-              <mat-icon>chevron_left</mat-icon>
-            </button>
-          </ng-template > 
+          <ng-template  *ngIf="element.order.stateId != 0;then enabledDecrement else disabledDecrement"> </ng-template >
+
+            <ng-template  #enabledDecrement> 
+              <button mat-button (click)="changeOrderState(element.order.stateId-1, element)"> 
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+            </ng-template >
+
+            <ng-template  #disabledDecrement> 
+              <button mat-button disabled> 
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+            </ng-template > 
+
           <!-- current state -->
-          {{stateNames[element.order.stateId]}} 
+          <span class="btn">{{stateNames[element.order.stateId]}} </span>
           <!-- increment -->
-          <button mat-button
-          (click)="changeOrderState(element.order.stateId+1, element)"
-          >
-            <mat-icon>chevron_right</mat-icon>
-          </button>
+          <ng-template  *ngIf="element.order.stateId != 3;then enabledIncrement else disabledIncrement"> </ng-template >
+            <ng-template  #enabledIncrement> 
+              <button mat-button (click)="changeOrderState(element.order.stateId+1, element)"> 
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </ng-template >
+
+            <ng-template  #disabledIncrement> 
+              <button mat-button disabled> 
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </ng-template > 
         </td>
       </ng-container>
 
@@ -203,11 +213,18 @@
         *matCellDef="let element"
         (click)="$event.stopPropagation()"
         >
-          <button mat-button
-          (click)="changeOrderState(4, element)"
-          >
-            <mat-icon class="cancel">clear</mat-icon> 
+        <div [ngSwitch]="element.order.paidId">
+          <button *ngSwitchCase="0" mat-button (click)="changeOrderState(4, element)" color="warn">
+            <mat-icon>clear</mat-icon> 
           </button>
+
+          <button *ngSwitchCase="1" mat-button disabled>            
+            <mat-icon>clear</mat-icon> 
+          </button>
+        </div>
+
+          
+
         </td>  
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

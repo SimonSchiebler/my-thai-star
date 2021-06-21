@@ -40,7 +40,7 @@ table {
 }
 
 th {
-  width: 25%;
+  width: 16,66%;
   font-weight: bold;
 }
 
@@ -54,10 +54,6 @@ td:not(:nth-child(1)) {
 
 .btn {
   width: 100px!important;
-}
-
-.cancel {
-  color: red;
 }
 
 @media (max-width: 599px) {
