@@ -8,18 +8,17 @@ const util = process.env.DEBUG ? require("./utilMock") : require("./util");
 let responsesDE = require("./responses/DE");
 let responsesEN = require("./responses/EN");
 
-const getResponseObject = (requestEnvelope) =>{
+const getResponseObject = (requestEnvelope) => {
   //TODO select based on lang
-  switch (requestEnvelope.request.locale)
-  {
-  case "de-DE":
-    return responsesDE.messages;
-  case "en-US":
-    return responsesEN.messages;
-  default:
-    return responsesEN.messages;
+  switch (requestEnvelope.request.locale) {
+    case "de-DE":
+      return responsesDE.messages;
+    case "en-US":
+      return responsesEN.messages;
+    default:
+      return responsesEN.messages;
   }
-}
+};
 
 const PERMISSIONS = [
   "read::alexa:device:all:address",
@@ -35,7 +34,17 @@ const LaunchRequestHandler = {
     );
   },
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).LaunchRequestHandler;
+    const table = await util.getTableByDeviceId(
+      handlerInput.requestEnvelope.context.System.device.deviceId
+    );
+    const sessionAttributes =
+      handlerInput.attributesManager.getSessionAttributes();
+    sessionAttributes.tableId = table.id;
+    handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).LaunchRequestHandler;
     const speakOutput = messages.spechoutput;
     return handlerInput.responseBuilder
       .speak(speakOutput)
@@ -52,90 +61,99 @@ const ReserveIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).ReserveIntentHandler;
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).ReserveIntentHandler;
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
-    const lastAction = sessionAttributes.lastAction;
 
-    switch (lastAction) {
-      case "setDate":
-        sessionAttributes.date =
-          handlerInput.requestEnvelope.request.intent.slots.date.value;
-        break;
-      case "setTime":
-        sessionAttributes.time =
-          handlerInput.requestEnvelope.request.intent.slots.time.value;
-        break;
-      case "setAssistants":
-        sessionAttributes.assistants =
-          handlerInput.requestEnvelope.request.intent.slots.assistants.value;
-        break;
-      case "setWantsToOrder":
-        sessionAttributes.wantsToOrder =
-          handlerInput.requestEnvelope.request.intent.slots.wantsToOrder.resolutions.resolutionsPerAuthority[0].values[0].value.name;
-        break;
-      default:
-        break;
-    }
+    if (!sessionAttributes.tableId) {
+      const lastAction = sessionAttributes.lastAction;
 
-    const date = sessionAttributes.date;
-    const time = sessionAttributes.time;
-    const assistants = sessionAttributes.assistants;
-    const wantsToOrder = sessionAttributes.wantsToOrder;
+      switch (lastAction) {
+        case "setDate":
+          sessionAttributes.date =
+            handlerInput.requestEnvelope.request.intent.slots.date.value;
+          break;
+        case "setTime":
+          sessionAttributes.time =
+            handlerInput.requestEnvelope.request.intent.slots.time.value;
+          break;
+        case "setAssistants":
+          sessionAttributes.assistants =
+            handlerInput.requestEnvelope.request.intent.slots.assistants.value;
+          break;
+        case "setWantsToOrder":
+          sessionAttributes.wantsToOrder =
+            handlerInput.requestEnvelope.request.intent.slots.wantsToOrder.resolutions.resolutionsPerAuthority[0].values[0].value.name;
+          break;
+        default:
+          break;
+      }
 
-    handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-
-    if (wantsToOrder == "no") {
-      const client = handlerInput.serviceClientFactory.getUpsServiceClient();
-      const email = await client.getProfileEmail();
-      const name = await client.getProfileName();
-
-      const combinedDate = date + "T" + time + ":00";
-
-      util.createReservation(name, email, combinedDate, assistants, false);
-      return handlerInput.responseBuilder
-        .speak(messages.buildReservedTableAwnser (email, date, time))
-        .getResponse();
-    } else if (!date && wantsToOrder === undefined) {
-      sessionAttributes.lastAction = "setDate";
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-      return handlerInput.responseBuilder
-        .addElicitSlotDirective("date")
-        .speak(messages.askForDate)
-        .getResponse();
-    } else if (!time && wantsToOrder === undefined) {
-      sessionAttributes.lastAction = "setTime";
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-      return handlerInput.responseBuilder
-        .addElicitSlotDirective("time")
-        .speak(messages.askForTime)
-        .getResponse();
-    } else if (!assistants && wantsToOrder === undefined) {
-      sessionAttributes.lastAction = "setAssistants";
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-      return handlerInput.responseBuilder
-        .addElicitSlotDirective("assistants")
-        .speak(messages.askForNumberOfPeople)
-        .getResponse();
-    } else if (date && time && assistants && wantsToOrder === undefined) {
-      sessionAttributes.lastAction = "setWantsToOrder";
+      const date = sessionAttributes.date;
+      const time = sessionAttributes.time;
+      const assistants = sessionAttributes.assistants;
+      const wantsToOrder = sessionAttributes.wantsToOrder;
 
       handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-      return handlerInput.responseBuilder
-        .addElicitSlotDirective("wantsToOrder")
-        .speak(messages.addAnOrderQuestion)
-        .getResponse();
-    } else if (date && time && assistants && wantsToOrder === "yes") {
-      sessionAttributes.lastAction = "setDish";
 
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+      if (wantsToOrder == "no") {
+        const client = handlerInput.serviceClientFactory.getUpsServiceClient();
+        const email = await client.getProfileEmail();
+        const name = await client.getProfileName();
+
+        const combinedDate = date + "T" + time + ":00";
+
+        util.createReservation(name, email, combinedDate, assistants, false);
+        return handlerInput.responseBuilder
+          .speak(messages.buildReservedTableAwnser(email, date, time))
+          .getResponse();
+      } else if (!date && wantsToOrder === undefined) {
+        sessionAttributes.lastAction = "setDate";
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("date")
+          .speak(messages.askForDate)
+          .getResponse();
+      } else if (!time && wantsToOrder === undefined) {
+        sessionAttributes.lastAction = "setTime";
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("time")
+          .speak(messages.askForTime)
+          .getResponse();
+      } else if (!assistants && wantsToOrder === undefined) {
+        sessionAttributes.lastAction = "setAssistants";
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("assistants")
+          .speak(messages.askForNumberOfPeople)
+          .getResponse();
+      } else if (date && time && assistants && wantsToOrder === undefined) {
+        sessionAttributes.lastAction = "setWantsToOrder";
+
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("wantsToOrder")
+          .speak(messages.addAnOrderQuestion)
+          .getResponse();
+      } else if (date && time && assistants && wantsToOrder === "yes") {
+        sessionAttributes.lastAction = "setDish";
+
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("dish", {
+            name: "OrderIntent",
+            confirmationStatus: "CONFIRMED",
+            slots: {},
+          })
+          .speak(messages.askForItem)
+          .getResponse();
+      }
+    } else {
       return handlerInput.responseBuilder
-        .addElicitSlotDirective("dish", {
-          name: "OrderIntent",
-          confirmationStatus: "CONFIRMED",
-          slots: {},
-        })
-        .speak(messages.askForItem)
+        .speak(messages.homeRestriction)
         .getResponse();
     }
   },
@@ -149,7 +167,9 @@ const OrderIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).OrderIntentHandler;
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).OrderIntentHandler;
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
     if (!sessionAttributes.orderlist) sessionAttributes.orderlist = [];
@@ -286,64 +306,73 @@ const OrderIntentHandler = {
       oneMoreOrder === "no"
     ) {
       if (
-        handlerInput.requestEnvelope.request.intent.slots.confirmation.resolutions.resolutionsPerAuthority[0].values[0].value.name ===
+        handlerInput.requestEnvelope.request.intent.slots.confirmation
+          .resolutions.resolutionsPerAuthority[0].values[0].value.name ===
           "yes" &&
         handlerInput.requestEnvelope.request.intent.slots.correct.value ===
           undefined
       ) {
-        
-        const speakOutput = messages.buildCurrentOrderContents(sessionAttributes.orderlist)
+        const speakOutput = messages.buildCurrentOrderContents(
+          sessionAttributes.orderlist
+        );
         return handlerInput.responseBuilder
           .addElicitSlotDirective("correct")
           .speak(speakOutput)
           .getResponse();
       } else if (
         (handlerInput.requestEnvelope.request.intent.slots.confirmation
-          .resolutions.resolutionsPerAuthority[0].values[0].value.name === "yes" &&
-          handlerInput.requestEnvelope.request.intent.slots.correct.resolutions.resolutionsPerAuthority[0].values[0].value.name ===
-            "yes") ||
-        handlerInput.requestEnvelope.request.intent.slots.confirmation.resolutions.resolutionsPerAuthority[0].values[0].value.name ===
-          "no"
+          .resolutions.resolutionsPerAuthority[0].values[0].value.name ===
+          "yes" &&
+          handlerInput.requestEnvelope.request.intent.slots.correct.resolutions
+            .resolutionsPerAuthority[0].values[0].value.name === "yes") ||
+        handlerInput.requestEnvelope.request.intent.slots.confirmation
+          .resolutions.resolutionsPerAuthority[0].values[0].value.name === "no"
       ) {
-        if (sessionAttributes.wantsToOrder === undefined) {
-          await util.createDelivery(
-            name,
-            email,
-            sessionAttributes.orderlist,
-            address
-          );
-          return handlerInput.responseBuilder
-            .speak(
-              messages.deliveryConfirmation
-            )
-            .getResponse();
-        } else if (sessionAttributes.wantsToOrder === "yes") {
-          const date = sessionAttributes.date;
-          const time = sessionAttributes.time;
-          const assistants = sessionAttributes.assistants;
+        if (!sessionAttributes) {
+          if (sessionAttributes.wantsToOrder === undefined) {
+            await util.createDelivery(
+              name,
+              email,
+              sessionAttributes.orderlist,
+              address
+            );
+            return handlerInput.responseBuilder
+              .speak(messages.deliveryConfirmation)
+              .getResponse();
+          } else if (sessionAttributes.wantsToOrder === "yes") {
+            const date = sessionAttributes.date;
+            const time = sessionAttributes.time;
+            const assistants = sessionAttributes.assistants;
 
-          const combinedDate = date + "T" + time + ":00";
+            const combinedDate = date + "T" + time + ":00";
 
-          util.createOrder(
-            name,
-            email,
-            sessionAttributes.orderlist,
-            combinedDate,
-            assistants
-          );
+            util.createOrder(
+              name,
+              email,
+              sessionAttributes.orderlist,
+              combinedDate,
+              assistants
+            );
+            return handlerInput.responseBuilder
+              .speak(messages.orderConfirmation)
+              .getResponse();
+          }
+        } else {
+          await util.addOrderInhouse(sessionAttributes.orderlist, deviceId);
+
           return handlerInput.responseBuilder
-            .speak(messages.orderConfirmation)
+            .speak(messages.orderInhouseConfirmation)
             .getResponse();
         }
       } else if (
-        handlerInput.requestEnvelope.request.intent.slots.confirmation.resolutions.resolutionsPerAuthority[0].values[0].value.name ===
+        handlerInput.requestEnvelope.request.intent.slots.confirmation
+          .resolutions.resolutionsPerAuthority[0].values[0].value.name ===
           "yes" &&
-        handlerInput.requestEnvelope.request.intent.slots.correct.resolutions.resolutionsPerAuthority[0].values[0].value.name === "no"
+        handlerInput.requestEnvelope.request.intent.slots.correct.resolutions
+          .resolutionsPerAuthority[0].values[0].value.name === "no"
       ) {
         return handlerInput.responseBuilder
-          .speak(
-            messages.orderNotConfirmed
-          )
+          .speak(messages.orderNotConfirmed)
           .getResponse();
       }
     }
@@ -358,13 +387,23 @@ const OrderStateHandler = {
     );
   },
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).OrderStateHandler
-    const client = handlerInput.serviceClientFactory.getUpsServiceClient();
-    const email = await client.getProfileEmail();
-    const orders = await util.getActiveOrders(email);
-    let res = messages.buildOpenOrders(orders.content);
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).OrderStateHandler;
+    const sessionAttributes =
+      handlerInput.attributesManager.getSessionAttributes();
+    if (!sessionAttributes.tableId) {
+      const client = handlerInput.serviceClientFactory.getUpsServiceClient();
+      const email = await client.getProfileEmail();
+      const orders = await util.getActiveOrders(email);
+      let res = messages.buildOpenOrders(orders.content);
 
-    return handlerInput.responseBuilder.speak(res).getResponse();
+      return handlerInput.responseBuilder.speak(res).getResponse();
+    } else {
+      return handlerInput.responseBuilder
+        .speak(messages.homeRestriction)
+        .getResponse();
+    }
   },
 };
 
@@ -377,9 +416,18 @@ const AddressIntentHandler = {
   },
 
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).AddressIntentHandler
-
-    return handlerInput.responseBuilder.speak(messages.address).getResponse();
+    const sessionAttributes =
+      handlerInput.attributesManager.getSessionAttributes();
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).AddressIntentHandler;
+    if (!sessionAttributes) {
+      return handlerInput.responseBuilder.speak(messages.address).getResponse();
+    } else {
+      return handlerInput.responseBuilder
+        .speak(messages.homeRestriction)
+        .getResponse();
+    }
   },
 };
 
@@ -391,15 +439,25 @@ const WaiterIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).WaiterIntentHandler;
-    const { deviceId } = handlerInput.requestEnvelope.context.System.device;
-    
-    await util.setWaiterState(2, deviceId);
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).WaiterIntentHandler;
+    const sessionAttributes =
+      handlerInput.attributesManager.getSessionAttributes();
+    if (!sessionAttributes.tableId) {
+      return handlerInput.responseBuilder
+        .speak(messages.inhouseRestriction)
+        .getResponse();
+    } else {
+      const { deviceId } = handlerInput.requestEnvelope.context.System.device;
 
-    return handlerInput.responseBuilder
-      .speak(messages.waiterWasCalled)
-      .getResponse();
-  }
+      await util.setWaiterState(2, deviceId);
+
+      return handlerInput.responseBuilder
+        .speak(messages.waiterWasCalled)
+        .getResponse();
+    }
+  },
 };
 
 const BillIntentHandler = {
@@ -410,16 +468,27 @@ const BillIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).BillIntentHandler;
-    const { deviceId } = handlerInput.requestEnvelope.context.System.device;
-    console.log(deviceId);
-
-    await util.setWaiterState(1, deviceId);
-
-    return handlerInput.responseBuilder
-      .speak(messages.billRequested)
-      .getResponse();
-  }
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).BillIntentHandler;
+    const sessionAttributes =
+      handlerInput.attributesManager.getSessionAttributes();
+    if(!sessionAttributes.tableId) {
+      return handlerInput.responseBuilder
+        .speak(messages.inhouseRestriction)
+        .getResponse();
+    } else {
+      const { deviceId } = handlerInput.requestEnvelope.context.System.device;
+      console.log(deviceId);
+  
+      await util.setWaiterState(1, deviceId);
+  
+      return handlerInput.responseBuilder
+        .speak(messages.billRequested)
+        .getResponse();
+    }
+    },
+    
 };
 
 const MenuIntentHandler = {
@@ -430,7 +499,9 @@ const MenuIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    messages = getResponseObject(handlerInput.requestEnvelope).MenuIntentHandler;
+    messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).MenuIntentHandler;
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
     if (!sessionAttributes.page) sessionAttributes.page = 0;
@@ -458,7 +529,8 @@ const MenuIntentHandler = {
         .speak(speakOutput)
         .getResponse();
     } else if (
-      handlerInput.requestEnvelope.request.intent.slots.hearMore.resolutions.resolutionsPerAuthority[0].values[0].value.name === "yes"
+      handlerInput.requestEnvelope.request.intent.slots.hearMore.resolutions
+        .resolutionsPerAuthority[0].values[0].value.name === "yes"
     ) {
       const dishes = await util.getDishes(size, page);
       page++;
@@ -490,7 +562,8 @@ const MenuIntentHandler = {
           .getResponse();
       }
     } else if (
-      handlerInput.requestEnvelope.request.intent.slots.hearMore.resolutions.resolutionsPerAuthority[0].values[0].value.name === "no"
+      handlerInput.requestEnvelope.request.intent.slots.hearMore.resolutions
+        .resolutionsPerAuthority[0].values[0].value.name === "no"
     ) {
       return handlerInput.responseBuilder
         .speak(messages.endingPhrase)
@@ -507,11 +580,21 @@ const HelpIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).HelpIntentHandler;
-
-    return handlerInput.responseBuilder
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).HelpIntentHandler;
+    const sessionAttributes =
+      handlerInput.attributesManager.getSessionAttributes();
+      if(!sessionAttributes.tableId){
+        return handlerInput.responseBuilder
       .speak(messages.helpMessageHome)
       .getResponse();
+      } else {
+        return handlerInput.responseBuilder
+      .speak(messages.helpMessageInhouse)
+      .getResponse();
+      }
+    
   },
 };
 const CancelAndStopIntentHandler = {
@@ -525,7 +608,9 @@ const CancelAndStopIntentHandler = {
     );
   },
   async handle(handlerInput) {
-    const messages = getResponseObject(handlerInput.requestEnvelope).CancelAndStopIntentHandler;
+    const messages = getResponseObject(
+      handlerInput.requestEnvelope
+    ).CancelAndStopIntentHandler;
     const speakOutput = messages.bye;
     return handlerInput.responseBuilder.speak(speakOutput).getResponse();
   },

@@ -11,6 +11,7 @@ module.exports.messages = {
       askForNumberOfPeople: "Wie viele Personen werden da sein?",
       addAnOrderQuestion: "Möchtest du deiner Reservierung eine Bestellung hinzufügen.",
       askForItem: "Welches Gericht möchtes du hinzufügen?",
+      homeRestriction: "Entschuldigung aber Sie können einen Tisch nur reservieren wenn Sie von Zuhause den Skill starten.",
     },
     OrderIntentHandler: {
       didNotUnderstandDish:
@@ -23,6 +24,8 @@ module.exports.messages = {
         "Deine Bestellung wurde aufgegeben. Danke, dass du bei uns bestellt hast.",
       orderConfirmation:
         "Deine Reservierung wurde getätigt. Wir erwarten dich.",
+      orderInhouseConfirmation:
+        "Deine Bestellung wurde erfasst. Ein Kellner sollte bald mit dem Essen bei Ihnen sein.",
       orderNotConfirmed:
         "Das ist schade. Wenn du eine Bestellung aufgeben möchtests rufe bitte nocheinmal den My Thai Star Skill auf.",
       buildCurrentOrderContents: (orders) => {
@@ -53,18 +56,22 @@ module.exports.messages = {
         }
         return res;
       },
+      homeRestriction: "Entschuldigung aber Sie können den Bestellstatus nur abrufen wenn Sie von Zuhause den Skill starten."
     },
     AddressIntentHandler: {
       address:
         "Die Addresse des Restaurants lautet: Place de l'Étoile - 11 rue de Tilsitt - 75017 Paris.",
+      homeRestriction: "Entschuldigung aber Sie können die Addresse nur abrufen wenn Sie von Zuhause den Skill starten.",
     },
     WaiterIntentHandler: {
       waiterWasCalled:
         "Es wurde ein Kellner informiert das Hilfe benötigt wird.",
+      inhouseRestriction: "Sie können nur dann einen Kellner rufen wenn Sie sich im Restaurant befinden.",
     },
     BillIntentHandler: {
       billRequested:
         "Es wurde ein Kellner informiert das dieser Tisch zahlen möchte.",
+        inhouseRestriction: "Sie können nur dann nach der Rechnung fragen wenn Sie sich im Restaurant befinden.",
     },
     MenuIntentHandler: {
       whatIsOnTheMenu: "Auf unserer Karte sind derzeit: ",

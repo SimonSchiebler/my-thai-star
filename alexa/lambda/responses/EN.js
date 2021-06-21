@@ -11,6 +11,7 @@ module.exports.messages = {
     askForNumberOfPeople: "With how many people are you going to come?",
     addAnOrderQuestion: "Do you want to add an order to your reservation?",
     askForItem: "What item do you want to add to your order?",
+    homeRestriction: "Sorry but you can only reserve a table when you use the Skill at home.",
   },
   OrderIntentHandler: {
     didNotUnderstandDish:
@@ -23,6 +24,8 @@ module.exports.messages = {
       "Your delivery has been placed. Thank you for ordering from us.",
     orderConfirmation:
       "Your Order has been placed. Thank you for your booking.",
+    orderInhouseConfirmation:
+      "Your Order has been placed. A waiter should be soon with you to bring you the food.",
     orderNotConfirmed:
       "I'm Sorry to hear that. If you want to make a new Order please call the My Thai Star Skill again.",
     buildCurrentOrderContents: (orders) => {
@@ -53,18 +56,22 @@ module.exports.messages = {
       }
       return res;
     },
+    homeRestriction: "Sorry but you can only ask for the order state when you use the Skill at home.",
   },
   AddressIntentHandler: {
     address:
       "The restaurants address is Place de l'Étoile - 11 rue de Tilsitt - 75017 Paris.",
+    homeRestriction: "Sorry but you can only ask for the address when you use the Skill at home.",
   },
   WaiterIntentHandler: {
     waiterWasCalled:
       "The waiter for your table was informed that you need help.",
+    inhouseRestriciton: "Sorry but you can only call for a waiter when you are at the restaurant.",
   },
   BillIntentHandler: {
     billRequested:
       "The waiter for your table was informed that you want to pay and need the bill.",
+      inhouseRestriciton: "Sorry but you can only ask for the bill when you are at the restaurant.",
   },
   MenuIntentHandler: {
     whatIsOnTheMenu: "The current Items on the Menu are: ",

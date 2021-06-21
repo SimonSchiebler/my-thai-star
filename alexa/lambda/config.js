@@ -1,6 +1,6 @@
 module.exports = {
     myThaiStarBackend:{
-        host:"java",
+        host:"localhost",
         port:8081,
         createBookingEndpoint:"/mythaistar/services/rest/bookingmanagement/v1/booking",
         createOrderEndpoint:"/mythaistar/services/rest/ordermanagement/v1/order",
@@ -8,5 +8,6 @@ module.exports = {
         setWaiterStateEndpoint:"/mythaistar/services/rest/bookingmanagement/v1/booking/updateWaitersHelp",
         getDishesEndpoint:"/mythaistar/services/rest/dishmanagement/v1/dish/search",
         getCurrentBookingEndpoint:"/mythaistar/services/rest/bookingmanagement/v1/booking/getBookingByDeviceId",
+        getTableByDeviceIdEndpoint:"/mythaistar/services/rest/bookingmanagement/v1/table/getTableByDeviceId",
     }
 }
