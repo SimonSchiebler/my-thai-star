@@ -219,7 +219,10 @@
         "extrasH": "Extra",
         "quantityH": "Quantity",
         "priceH": "Price"
-      }
+      },
+      "snackbarInHouse": "Order from Table ",
+      "snackbarDelivery": "Delivery to ",
+      "snackbarEnd": " was moved into order-archive"
     },
     "reservations": {
       "title": "Reservations",
@@ -238,7 +241,7 @@
       "canceledH": "Canceled"
     },
     "waitersHelp":{
-      "help": "Help!",
+      "help": "Help",
       "bill": "Bill"
     },
     "orderPayStates":{
@@ -276,6 +279,6 @@
     "sunday": "Sunday",
     "location": "Our location",
     "restday": " is a rest day",
-    "footer": "This is just a template AboutYou page due to the fact, that the restaurant My-Thai-Star does not exist."
+    "footer": "This is just a template AboutYou page due to the fact, that the restaurant 'My-Thai-Star' does not exist."
   }
 }

@@ -76,8 +76,6 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
     this.pageSizes = this.configService.getValues().pageSizes;
   }
 
-   //string part for SuccessBar
-   stringpart:string;
 
   ngOnInit(): void {
 
@@ -95,7 +93,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
         .map((x, i) => i);
     });
 
-    this.intervalService.setInterval(60000,() => this.waiterCockpitService.getOrders(this.pageable, this.sorting, this.filters).subscribe((data: any) => {
+    this.intervalService.setInterval(5000,() => this.waiterCockpitService.getOrders(this.pageable, this.sorting, this.filters).subscribe((data: any) => {
       this.orders = data.content;  
       this.totalOrders = data.totalElements;
     }));
@@ -194,6 +192,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
             this.orders.findIndex((el) => el.order.id == element.order.id),
             1,
           );
+          this.snackBarService.openSnack(this.stringInputForSnackBar(element), 5000, 'green');
           this.table.renderRows();
         }
       });
@@ -261,6 +260,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
             this.orders.findIndex((el) => el.order.id == element.order.id),
             1,
           );
+          this.snackBarService.openSnack(this.stringInputForSnackBar(element), 5000, 'green');
           this.table.renderRows();
         }
       });
@@ -275,5 +275,6 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.translocoSubscription.unsubscribe();
+    this.intervalService.clearInterval();
   }
 }
