@@ -183,22 +183,25 @@
           {{ columns[4].label }}
         </th>
         <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+        
+          <ng-container *ngIf="!element.booking.delivery">
+            <div [ngSwitch]="element.booking.waitersHelpId">
 
-          <div [ngSwitch]="element.booking.waitersHelpId">
-
-            <button *ngSwitchCase="0" mat-raised-button color="accent" class="btn">
-              <mat-icon>check_circle_outline</mat-icon>
-            </button>
-
-            <button *ngSwitchCase="1" mat-raised-button color="primary" class="btn" (click)="resetWaitersHelp(element)">
-              {{ 'cockpit.waitersHelp.bill' | transloco }}
-            </button>
-
-            <button *ngSwitchCase="2" mat-raised-button color="warn" class="btn" (click)="resetWaitersHelp(element)">            
-              {{ 'cockpit.waitersHelp.help' | transloco }}
-            </button>
-
-         </div>
+              <button *ngSwitchCase="0" mat-raised-button color="accent" class="btn">
+                <mat-icon>check_circle_outline</mat-icon>
+              </button>
+  
+              <button *ngSwitchCase="1" mat-raised-button color="primary" class="btn" (click)="resetWaitersHelp(element)">
+                {{ 'cockpit.waitersHelp.bill' | transloco }}
+              </button>
+  
+              <button *ngSwitchCase="2" mat-raised-button color="warn" class="btn" (click)="resetWaitersHelp(element)">            
+                {{ 'cockpit.waitersHelp.help' | transloco }}
+              </button>
+  
+           </div>
+          </ng-container>
+          
          
         </td>
       </ng-container>
