@@ -301,3 +301,32 @@ module.exports.setWaiterState = async (state, deviceId) => {
   });
 };
 
+module.exports.getCurrentBooking = async (deviceId) => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      port: config.myThaiStarBackend.port,
+      path: config.myThaiStarBackend.getCurrentBookingEndpoint + "/" + deviceId,
+      method: "GET",
+      host: config.myThaiStarBackend.host,
+    };
+
+    const req = http.request(options, (res) => {
+      console.log(`statusCode: ${res.statusCode}`);
+      let responseObjectString = "";
+      res.on("data", (d) => {
+        responseObjectString += d.toString();
+        process.stdout.write(d);
+      });
+      res.on("end", (d) => {
+        resolve(JSON.parse(responseObjectString));
+      });
+    });
+
+    req.on("error", (error) => {
+      reject(error);
+    });
+
+    req.write();
+    req.end();
+  });
+} 
