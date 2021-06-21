@@ -265,7 +265,10 @@
       "tableNotDefinedH": "---",
       "idH": "Id",
       "waitersHelpH": "Tisch benötigt",
-      "DeliveryFor": "Lieferung an "
+      "DeliveryFor": "Lieferung an ",
+      "deleteH": "Löschen",
+      "snackbarStart": "Die Buchung ",
+      "snackbarEnd": " wurde erfolgreich gelöscht."
     }
   },
   "aboutYou": {

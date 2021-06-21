@@ -15,6 +15,7 @@ import { ConfigService } from '../../core/config/config.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { Subscription } from 'rxjs';
 import { OrderListView } from '../../shared/view-models/interfaces';
+import { SnackBarService } from '../../core/snack-bar/snack-bar.service';
 
 @Component({
   selector: 'app-cockpit-reservation-cockpit',
@@ -36,10 +37,8 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
 
   reservations: ReservationView[] = [];
   totalReservations: number;
-  orders: OrderListView[] = [];
-  totalOrders: number;
   columns: any[];
-  displayedColumns: string[] = ['id', 'bookingDate', 'email', 'tablenumber'];
+  displayedColumns: string[] = ['id', 'bookingDate', 'email', 'tablenumber', 'deleteBooking'];
 
   pageSizes: number[];
 
@@ -57,6 +56,7 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
     private translocoService: TranslocoService,
     private dialog: MatDialog,
     private configService: ConfigService,
+    private  snackBarService: SnackBarService,
   ) {
     this.pageSizes = this.configService.getValues().pageSizes;
   }
@@ -83,8 +83,8 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
           { name: 'booking.id', label: cockpitTable.idH },
           { name: 'booking.bookingDate', label: cockpitTable.reservationDateH },
           { name: 'booking.email', label: cockpitTable.emailH },
-          { name: 'booking.tablenumber', label: cockpitTable.tablenumberH }
-          
+          { name: 'booking.tablenumber', label: cockpitTable.tablenumberH },
+          { name: 'booking.deleteBooking', label: cockpitTable.deleteH}
         ];
       });
   }
@@ -149,11 +149,32 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
         this.waiterCockpitService
           .getOrders(this.pageable, this.sorting, this.filters)
           .subscribe((data: any) => {
-            this.orders = data.content;
-            this.totalOrders = data.totalElements;
+            this.reservations = data.content;
+            this.totalReservations = data.totalElements;
             this.table.renderRows();
           });
       }); 
+  }
+
+  deleteBooking(element){
+    this.waiterCockpitService.deleteBooking(element.booking.id).subscribe( () => {
+      this.snackBarService.openSnack(this.stringInputForSnackBar(element), 5000, 'green');
+      this.waiterCockpitService
+          .getReservations(this.pageable, this.sorting, this.filters)
+          .subscribe((data: any) => {
+            this.reservations = data.content;
+            this.totalReservations = data.totalElements;
+            this.table.renderRows();
+          });
+    });
+  }
+
+  
+  stringInputForSnackBar(element): string{
+    var temp = this.translocoService.translate('cockpit.table.snackbarStart') 
+      + element.booking.id 
+      + this.translocoService.translate('cockpit.table.snackbarEnd');
+    return temp;
   }
 
   ngOnDestroy(): void {

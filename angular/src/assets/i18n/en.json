@@ -265,7 +265,10 @@
       "tableNotDefinedH": "---",
       "idH":"Id number",
       "waitersHelpH":"table needs",
-      "DeliveryFor": "Delivery for "
+      "DeliveryFor": "Delivery for ",
+      "deleteH": "Delete",
+      "snackbarStart": "Booking ",
+      "snackbarEnd": " was deleted."
     }
   },
   "aboutYou": {
