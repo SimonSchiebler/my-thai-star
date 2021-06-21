@@ -134,10 +134,10 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
   }
 
   @Override
-  public BookingEto findBookingByDeviceId(String id) {
+  public BookingEto findBookingByDeviceId(TableEto table) {
 
-    TableEntity table = getTableDao().findTablesByDeviceId(id).get(0);
-    List<BookingEntity> bookings = getBookingDao().findActiveBookingByTableId(table.getId());
+    TableEntity foundTable = getTableDao().findTablesByDeviceId(table.getDeviceId()).get(0);
+    List<BookingEntity> bookings = getBookingDao().findActiveBookingByTableId(foundTable.getId());
     BookingEntity booking = bookings.get(0);
 
     BookingEto eto = new BookingEto();
@@ -382,10 +382,10 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
   }
 
   @Override
-  public TableEto findTableByDeviceId(String id) {
+  public TableEto findTableByDeviceId(TableEto table) {
 
-    LOG.debug("Get Table with id {} from database.", id);
-    return getBeanMapper().map(getTableDao().findTablesByDeviceId(id).get(0), TableEto.class);
+    LOG.debug("Get Table with id {} from database.", table.getDeviceId());
+    return getBeanMapper().map(getTableDao().findTablesByDeviceId(table.getDeviceId()).get(0), TableEto.class);
   }
 
   @Override

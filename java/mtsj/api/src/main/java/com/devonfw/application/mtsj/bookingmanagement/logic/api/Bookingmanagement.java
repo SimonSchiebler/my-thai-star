@@ -43,7 +43,7 @@ public interface Bookingmanagement {
    * @param token
    * @return The {@link BookingCto}
    */
-  BookingEto findBookingByDeviceId(@PathParam("id") String id);
+  BookingEto findBookingByDeviceId(TableEto id);
 
   /**
    * Returns InvitedGuest by Token
@@ -141,7 +141,7 @@ public interface Bookingmanagement {
    * @param id The id 'id' of the Table.
    * @return The {@link TableEto} with id 'id'
    */
-  TableEto findTableByDeviceId(String id);
+  TableEto findTableByDeviceId(TableEto id);
 
   /**
    * Returns a paginated list of Tables matching the search criteria.

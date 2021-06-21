@@ -83,9 +83,9 @@ public class BookingmanagementRestServiceImpl implements BookingmanagementRestSe
   }
 
   @Override
-  public TableEto getTableByDeviceId(String id) {
+  public TableEto getTableByDeviceId(TableEto table) {
 
-    return this.bookingmanagement.findTableByDeviceId(id);
+    return this.bookingmanagement.findTableByDeviceId(table);
   }
 
   @Override
@@ -137,9 +137,9 @@ public class BookingmanagementRestServiceImpl implements BookingmanagementRestSe
   }
 
   @Override
-  public BookingEto getBookingByDeviceId(String id) {
+  public BookingEto getBookingByDeviceId(TableEto table) {
 
-    return this.bookingmanagement.findBookingByDeviceId(id);
+    return this.bookingmanagement.findBookingByDeviceId(table);
   }
 
 }

@@ -46,9 +46,9 @@ public interface BookingmanagementRestService {
    * @param id the ID of the {@link BookingEto}
    * @return the {@link BookingEto}
    */
-  @GET
-  @Path("/booking/getBookingByDeviceId/{id}")
-  public BookingEto getBookingByDeviceId(@PathParam("id") String id);
+  @POST
+  @Path("/booking/getBookingByDeviceId/")
+  public BookingEto getBookingByDeviceId(TableEto id);
 
   /**
    * Delegates to {@link Bookingmanagement#saveBooking}.
@@ -146,9 +146,9 @@ public interface BookingmanagementRestService {
    * @param id the ID of the {@link TableEto}
    * @return the {@link TableEto}
    */
-  @GET
-  @Path("/table/getTableByDeviceId/{id}/")
-  public TableEto getTableByDeviceId(@PathParam("id") String id);
+  @POST
+  @Path("/table/getTableByDeviceId/")
+  public TableEto getTableByDeviceId(TableEto deviceId);
 
   /**
    * Delegates to {@link Bookingmanagement#saveTable}.
