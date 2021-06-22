@@ -1,7 +1,7 @@
 module.exports.messages = {
     LaunchRequestHandler: {
       spechoutput:
-        "Willkommen bei My Thai Star. Um zu erfahren wie ich dir helfen kann sag einfach Hilfe.",
+        "Willkommen bei My Thai Star.",
     },
     ReserveIntentHandler: {
       buildReservedTableAwnser: (email, date, time) =>
@@ -39,12 +39,12 @@ module.exports.messages = {
     OrderStateHandler: {
       buildOpenOrders: (orders) => {
         let res =
-          "Du hast derzeit " + orders.content.length + " offene Bestellungen. \n";
+          "Du hast derzeit " + orders.length + " offene Bestellungen. \n";
         const states = ["bestellt", "Zubereitung", "Auslieferung"];
         for (const order of orders) {
           state = states[order.orders[0].stateId];
           var t = new Date(1970, 0, 1);
-          t.setSeconds(parseInt(orders.content[i].creationDate) + 7200);
+          t.setSeconds(parseInt(orders.creationDate) + 7200);
           var date =
             t.toDateString() + " um " + t.getHours() + ":" + t.getMinutes();
           res +=
