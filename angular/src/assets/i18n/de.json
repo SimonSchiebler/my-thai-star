@@ -21,6 +21,12 @@
     "of": "von",
     "noResults": "Keine Ergebnisse"
   },
+  "orderStateView":{
+    "thankYou":"Danke für deine Bestellung",
+    "orderPending":"Deine Bestellung wird in kürze geliefert",
+    "order":"Deine Bestellung",
+    "address":"Lieferadresse"
+  },
   "alerts": {
     "accessError": "Zugang verweigert, bitte erst einloggen",
     "genericError":"Ein Fehler ist aufgetreten, bitte versuche es später noch einmal",
@@ -32,7 +38,8 @@
       "orderCancel": "Bestellung erfolgreich abgebrochen"
     },
     "orderID": "Zum Bestellen ist eine Buchungs-ID notwendig. Gib entweder eine bereits bestehende Buchungs-ID ein oder buch einen Tisch.",
-    "passwordError": "Die Passwörter stimmen nicht überein",
+    "passwordError": "Das Passwort muss aus mindestens 6 Zeichen bestehen",
+    "confirmPassword":"Die Passwörter stimmen nicht überein",
     "authAlerts": {
       "loginSuccess": "Anmeldung erfolgreich",
       "registerSuccess": "Registrierung erfolgreich",
@@ -58,7 +65,8 @@
     "total": "Gesamt",
     "referenceNumber": "Referenznummer",
     "id": "Id",
-    "userRoleId": "Rolle"
+    "userRoleId": "Rolle",
+    "stateId": "Status"
   },
   "bookTable": {
     "title":"Du kannst deine Freunde zum Mittagessen einladen oder einen Tisch buchen",
@@ -91,7 +99,8 @@
     "orders": "Bestellungen",
     "order-archive":"Archiv",
     "reservations": "Reservierungen",
-    "admin": "Administation",
+    "admin": "Benutzer",
+    "devices": "Geräte",
     "aboutYou":{
       "opening": "Öffnungszeiten",
       "title": "Über uns",
@@ -194,6 +203,20 @@
           "userRoleIdH": "Rolle",
           "deleteButtonH": "Löschen"
       },
+      "successBarCreated": {
+        "stringpart1": "Der Nutzer ",
+        "stringpart2":" mit der ID ",
+        "stringpart3": " wurde erfolgreich erstellt"
+      },
+      "successBarDeleted": {
+        "stringpart1": "Der Nutzer ",
+        "stringpart2":" mit der ID ",
+        "stringpart3": " wurde erfolgreich gelöscht"
+      },
+      "deviceTable":{
+        "tableNumber":"Tischnummer",
+        "deviceId":"Geräte Id"
+      },
       "userDeleteMessage": "Bestätigen Sie das Löschen des Users: ",
       "warning": "Sind Sie sicher?",   
       "customer": "Kunde",
@@ -215,7 +238,7 @@
       },
       "snackbarInHouse": "Die Bestellung von Tisch ",
       "snackbarDelivery": "Die Lieferung an ",
-      "snackbarEnd": " wurde in das Bestellungsarchiv verschoben."
+      "snackbarEnd": " wurde in das Bestellungsarchiv verschoben"
     },
     "reservations": {
       "title": "Reservierungen",
@@ -233,14 +256,49 @@
       "deliveredH": "Zugestellt",
       "canceledH": "Storniert"
     },
+    "waitersHelp":{
+      "help": "Hilfe",
+      "bill": "Rechnung"
+    },
+    "orderPayStates":{
+      "paid": "Bezahlt",
+      "unpaid": "Unbezahlt"
+    },
     "table": {
       "reservationDateH": "Reservierungsdatum",
       "emailH": "Email",
       "orderStateH":"Status",
-      "bookingTokenH": "Referenznummer",
-      "ownerH": "Eigentümer",
-      "tableH": "Tisch",
-      "creationDateH": "Erstelldatum"
+      "orderPayStateH":"Bezahlstatus",
+      "cancelH":"Stonieren",
+      "decrementH":"Bestellung heruntersetzten",
+      "bookingTokenH": "Referenzierungsnummer",
+      "ownerH": "Besitzer",
+      "tablenumberH": "Tischnummer",
+      "creationDateH": "Erstelldatum",
+      "postCodeH": "Postleitzahl",
+      "cityH": "Stadt",
+      "addressLineH": "Adresse",
+      "tableNotDefinedH": "---",
+      "idH": "Id",
+      "waitersHelpH": "Tisch benötigt",
+      "DeliveryFor": "Lieferung an ",
+      "deleteH": "Löschen",
+      "snackbarStart": "Die Buchung ",
+      "snackbarEnd": " wurde erfolgreich gelöscht."
     }
+  },
+  "aboutYou": {
+    "title": "Über uns",
+    "opening": "Öffnungszeiten",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag",
+    "sunday": "Sonntag",
+    "location": "Unser Standort",
+    "restday": " ist ein Ruhetag",
+    "footer": "Dies ist ein nur Template für eine AboutYou Seite, da das Restaurant 'My-Thai-Star' nicht exisitert"
   }
 }

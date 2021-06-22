@@ -24,6 +24,7 @@ import { DeleteUserDialogComponent } from './admin-cockpit/delete-user-dialog/de
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AdminService } from './services/admin.service';
+import { DeviceAdministrationComponent } from './admin-cockpit/device-administration/device-administration.component';
 
 @NgModule({
   imports: [
@@ -53,7 +54,8 @@ import { AdminService } from './services/admin.service';
     OrderArchiveCockpitComponent,
     AdminCockpitComponent,
     RegisterDialogComponent,
-    DeleteUserDialogComponent
+    DeleteUserDialogComponent,
+    DeviceAdministrationComponent
 
   ],
   exports: [

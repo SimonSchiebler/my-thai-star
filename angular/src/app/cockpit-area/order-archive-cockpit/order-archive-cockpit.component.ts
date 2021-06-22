@@ -53,7 +53,8 @@ export class OrderArchiveCockpitComponent implements OnInit, OnDestroy {
     bookingToken: undefined,
     stateId: undefined,
     archive: true,
-    order_cockpit: false
+    order_cockpit: false,
+    delivery: undefined
   };
 
   stateNames = []

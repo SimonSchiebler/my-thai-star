@@ -12,8 +12,6 @@ import org.springframework.data.repository.query.Param;
 import com.devonfw.application.mtsj.bookingmanagement.common.api.datatype.BookingType;
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.BookingSearchCriteriaTo;
 import com.devonfw.application.mtsj.bookingmanagement.dataaccess.api.BookingEntity;
-import com.devonfw.application.mtsj.bookingmanagement.dataaccess.api.TableEntity;
-import com.devonfw.application.mtsj.ordermanagement.dataaccess.api.OrderEntity;
 import com.devonfw.module.jpa.dataaccess.api.QueryUtil;
 import com.devonfw.module.jpa.dataaccess.api.data.DefaultRepository;
 import com.querydsl.core.alias.Alias;
@@ -24,83 +22,91 @@ import com.querydsl.jpa.impl.JPAQuery;
  */
 public interface BookingRepository extends DefaultRepository<BookingEntity> {
 
-	/**
-	 * @param token
-	 * @return the {@link BookingEntity} objects that matched the search.
-	 */
-	@Query("SELECT booking FROM BookingEntity booking" //
-			+ " WHERE booking.bookingToken = :token")
-	BookingEntity findBookingByToken(@Param("token") String token);
-	
-	/**
-	 * @param tableId
-	 * @return the {@link BookingEntity} objects that matched the search.
-	 */
-	@Query("SELECT booking FROM BookingEntity booking" 
-			+ " WHERE booking.table.id = :tableId")
-	List<BookingEntity> findBookingByTableId(@Param("tableId") Long tableId);
-	
-	/**
-	 * @param tableId
-	 * @return the {@link BookingEntity} objects that matched the search.
-	 */
-	@Query("SELECT booking FROM BookingEntity booking" 
-			+ " WHERE booking.id = :bookingId")
-	List<BookingEntity> findBookingById(@Param("bookingId") Long bookingId);
+  /**
+   * @param token
+   * @return the {@link BookingEntity} objects that matched the search.
+   */
+  @Query("SELECT booking FROM BookingEntity booking" //
+      + " WHERE booking.bookingToken = :token")
+  BookingEntity findBookingByToken(@Param("token") String token);
 
-	/**
-	 * @param criteria the {@link BookingSearchCriteriaTo} with the criteria to
-	 *                 search.
-	 * @return the {@link Page} of the {@link BookingEntity} objects that matched
-	 *         the search.
-	 */
-	default Page<BookingEntity> findBookings(BookingSearchCriteriaTo criteria) {
+  /**
+   * @param tableId
+   * @return the {@link BookingEntity} objects that matched the search.
+   */
+  @Query("SELECT booking FROM BookingEntity booking" + " WHERE booking.table.id = :tableId")
+  List<BookingEntity> findBookingByTableId(@Param("tableId") Long tableId);
 
-		BookingEntity alias = newDslAlias();
-		JPAQuery<BookingEntity> query = newDslQuery(alias);
+  /**
+   * @param tableId
+   * @return the {@link BookingEntity} objects that matched the search.
+   */
+  @Query("SELECT booking FROM BookingEntity booking"
+      + " WHERE booking.table.id = :tableId ORDER BY booking.bookingDate DESC")
+  List<BookingEntity> findActiveBookingByTableId(@Param("tableId") Long tableId);
 
-		String name = criteria.getName();
-		if ((name != null) && !name.isEmpty()) {
-			QueryUtil.get().whereString(query, $(alias.getName()), name, criteria.getNameOption());
-		}
-		String bookingToken = criteria.getBookingToken();
-		if (bookingToken != null && !bookingToken.isEmpty()) {
-			QueryUtil.get().whereString(query, $(alias.getBookingToken()), bookingToken,
-					criteria.getBookingTokenOption());
-		}
-		String comment = criteria.getComment();
-		if (comment != null && !comment.isEmpty()) {
-			QueryUtil.get().whereString(query, $(alias.getComment()), comment, criteria.getCommentOption());
-		}
-		Instant bookingDate = criteria.getBookingDate();
-		if (bookingDate != null) {
-			query.where(Alias.$(alias.getBookingDate()).eq(bookingDate));
-		}
-		Instant expirationDate = criteria.getExpirationDate();
-		if (expirationDate != null) {
-			query.where(Alias.$(alias.getExpirationDate()).eq(expirationDate));
-		}
-		Instant creationDate = criteria.getCreationDate();
-		if (creationDate != null) {
-			query.where(Alias.$(alias.getCreationDate()).eq(creationDate));
-		}
-		String email = criteria.getEmail();
-		if (email != null && !email.isEmpty()) {
-			QueryUtil.get().whereString(query, $(alias.getEmail()), email, criteria.getEmailOption());
+  /**
+   * @param tableId
+   * @return the {@link BookingEntity} objects that matched the search.
+   */
+  @Query("SELECT booking FROM BookingEntity booking" + " WHERE booking.id = :bookingId")
+  List<BookingEntity> findBookingById(@Param("bookingId") Long bookingId);
 
-		}
-		Boolean canceled = criteria.getCanceled();
-		if (canceled != null) {
-			query.where(Alias.$(alias.getCanceled()).eq(canceled));
-		}
-		BookingType bookingType = criteria.getBookingType();
-		if (bookingType != null) {
-			query.where(Alias.$(alias.getBookingType()).eq(bookingType));
-		}
-		Long table = criteria.getTableId();
-		if (table != null && alias.getTable() != null) {
-			query.where(Alias.$(alias.getTable().getId()).eq(table));
-		}
-		return QueryUtil.get().findPaginated(criteria.getPageable(), query, true);
+
+  /**
+   * @param criteria the {@link BookingSearchCriteriaTo} with the criteria to search.
+   * @return the {@link Page} of the {@link BookingEntity} objects that matched the search.
+   */
+  default Page<BookingEntity> findBookings(BookingSearchCriteriaTo criteria) {
+
+    BookingEntity alias = newDslAlias();
+    JPAQuery<BookingEntity> query = newDslQuery(alias);
+
+	Boolean delivery = criteria.getDelivery();
+	if ((delivery != null)) {
+		query.where(Alias.$(alias.getDelivery()).eq(delivery));
 	}
+    String name = criteria.getName();
+    if ((name != null) && !name.isEmpty()) {
+      QueryUtil.get().whereString(query, $(alias.getName()), name, criteria.getNameOption());
+    }
+    String bookingToken = criteria.getBookingToken();
+    if (bookingToken != null && !bookingToken.isEmpty()) {
+      QueryUtil.get().whereString(query, $(alias.getBookingToken()), bookingToken, criteria.getBookingTokenOption());
+    }
+    String comment = criteria.getComment();
+    if (comment != null && !comment.isEmpty()) {
+      QueryUtil.get().whereString(query, $(alias.getComment()), comment, criteria.getCommentOption());
+    }
+    Instant bookingDate = criteria.getBookingDate();
+    if (bookingDate != null) {
+      query.where(Alias.$(alias.getBookingDate()).eq(bookingDate));
+    }
+    Instant expirationDate = criteria.getExpirationDate();
+    if (expirationDate != null) {
+      query.where(Alias.$(alias.getExpirationDate()).eq(expirationDate));
+    }
+    Instant creationDate = criteria.getCreationDate();
+    if (creationDate != null) {
+      query.where(Alias.$(alias.getCreationDate()).eq(creationDate));
+    }
+    String email = criteria.getEmail();
+    if (email != null && !email.isEmpty()) {
+      QueryUtil.get().whereString(query, $(alias.getEmail()), email, criteria.getEmailOption());
+
+    }
+    Boolean canceled = criteria.getCanceled();
+    if (canceled != null) {
+      query.where(Alias.$(alias.getCanceled()).eq(canceled));
+    }
+    BookingType bookingType = criteria.getBookingType();
+    if (bookingType != null) {
+      query.where(Alias.$(alias.getBookingType()).eq(bookingType));
+    }
+    Long table = criteria.getTableId();
+    if (table != null && alias.getTable() != null) {
+      query.where(Alias.$(alias.getTable().getId()).eq(table));
+    }
+    return QueryUtil.get().findPaginated(criteria.getPageable(), query, true);
+  }
 }

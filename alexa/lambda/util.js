@@ -25,7 +25,6 @@ module.exports.createReservation = (
   assistants,
   delivery
 ) => {
-
   return new Promise((resolve, reject) => {
     date = new Date(date);
     const body = JSON.stringify({
@@ -52,7 +51,7 @@ module.exports.createReservation = (
     const req = http.request(options, (res) => {
       console.log(`statusCode: ${res.statusCode}`);
 
-      let responseObjectString = '';
+      let responseObjectString = "";
       res.on("data", (d) => {
         responseObjectString += d.toString();
         process.stdout.write(d);
@@ -151,7 +150,51 @@ module.exports.createOrder = async (
           extras: [],
         };
       }),
+    });
+    const options = {
+      port: config.myThaiStarBackend.port,
+      path: config.myThaiStarBackend.createOrderEndpoint,
+      method: "POST",
+      host: config.myThaiStarBackend.host,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": body.length,
+      },
+    };
 
+    const req = http.request(options, (res) => {
+      console.log(`statusCode: ${res.statusCode}`);
+      res.on("data", (d) => {
+        process.stdout.write(d);
+      });
+      res.on("end", (d) => {
+        resolve();
+      });
+    });
+
+    req.on("error", (error) => {
+      reject(error);
+    });
+
+    req.write(body);
+    req.end();
+  });
+};
+
+module.exports.addOrderInhouse = async (orderlines, deviceId) => {
+  const reservation = await this.getCurrentBooking(deviceId);
+
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+      booking: {
+        bookingToken: reservation.bookingToken,
+      },
+      orderLines: orderlines.map((el) => {
+        return {
+          orderLine: { dishId: el.dish.id, amount: el.amount, comment: "" },
+          extras: [],
+        };
+      }),
     });
     const options = {
       port: config.myThaiStarBackend.port,
@@ -209,7 +252,6 @@ module.exports.getActiveOrders = async (emailC) => {
       });
       res.on("end", (d) => {
         resolve(JSON.parse(responseObjectString));
-
       });
     });
 
@@ -225,12 +267,12 @@ module.exports.getActiveOrders = async (emailC) => {
 module.exports.getDishes = async (size, number) => {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
-      categories:[],
-      pageable:{
+      categories: [],
+      pageable: {
         pageSize: size,
         pageNumber: number,
-        sort: []
-      }
+        sort: [],
+      },
     });
     const options = {
       port: config.myThaiStarBackend.port,
@@ -262,13 +304,13 @@ module.exports.getDishes = async (size, number) => {
     req.write(body);
     req.end();
   });
-}
+};
 
 module.exports.setWaiterState = async (state, deviceId) => {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
       waitersHelp: state,
-      deviceId: deviceId
+      deviceId: deviceId,
     });
     const options = {
       port: config.myThaiStarBackend.port,
@@ -288,7 +330,6 @@ module.exports.setWaiterState = async (state, deviceId) => {
       });
       res.on("end", (d) => {
         resolve();
-
       });
     });
 
@@ -301,3 +342,78 @@ module.exports.setWaiterState = async (state, deviceId) => {
   });
 };
 
+module.exports.getCurrentBooking = async (deviceId) => {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+      deviceId: deviceId,
+    });
+
+    const options = {
+      port: config.myThaiStarBackend.port,
+      path: config.myThaiStarBackend.getCurrentBookingEndpoint,
+      method: "POST",
+      host: config.myThaiStarBackend.host,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": body.length,
+      },
+    };
+
+    const req = http.request(options, (res) => {
+      console.log(`statusCode: ${res.statusCode}`);
+      let responseObjectString = "";
+      res.on("data", (d) => {
+        responseObjectString += d.toString();
+        process.stdout.write(d);
+      });
+      res.on("end", (d) => {
+        resolve(JSON.parse(responseObjectString));
+      });
+    });
+
+    req.on("error", (error) => {
+      reject(error);
+    });
+
+    req.write(body);
+    req.end();
+  });
+};
+
+module.exports.getTableByDeviceId = async (deviceId) => {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+      deviceId: deviceId,
+    });
+
+    const options = {
+      port: config.myThaiStarBackend.port,
+      path: config.myThaiStarBackend.getTableByDeviceIdEndpoint,
+      method: "POST",
+      host: config.myThaiStarBackend.host,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": body.length,
+      },
+    };
+
+    const req = http.request(options, (res) => {
+      console.log(`statusCode: ${res.statusCode}`);
+      let responseObjectString = "";
+      res.on("data", (d) => {
+        responseObjectString += d.toString();
+        process.stdout.write(d);
+      });
+      res.on("end", (d) => {
+        resolve(JSON.parse(responseObjectString));
+      });
+    });
+
+    req.on("error", (error) => {
+      reject(error);
+    });
+
+    req.write(body);
+    req.end();
+  });
+};

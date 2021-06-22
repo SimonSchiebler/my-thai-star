@@ -72,7 +72,7 @@ export class ReservationDialogComponent implements OnInit {
           },
           { name: 'booking.name', label: cockpitReservationTable.ownerH },
           { name: 'booking.email', label: cockpitReservationTable.emailH },
-          { name: 'booking.tableId', label: cockpitReservationTable.tableH },
+          { name: 'booking.tableId', label: cockpitReservationTable.tablenumberH },
         ];
       });
 

@@ -12,12 +12,6 @@
     <nav mat-tab-nav-bar>
       <a
         mat-tab-link
-        (click)="openAboutYouDialog()"
-      >
-        <mat-icon>help_outline</mat-icon>
-      </a>
-      <a
-        mat-tab-link
         routerLink="/restaurant"
         routerLinkActive="navBottomBorder"
         [routerLinkActiveOptions]="{ exact: true }"
@@ -105,7 +99,14 @@
       >
         {{ 'main.admin' | transloco | uppercase }}
       </a>
-      
+      <a
+      mat-tab-link
+      routerLink="/devices"
+      routerLinkActive="navBottomBorder"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      {{ 'main.devices' | transloco | uppercase }}
+    </a>
     </nav>
   </div>
   <button
@@ -194,6 +195,17 @@
   >
     <span class="flag-icon flag-icon-{{ flag }}"></span>
   </button>
+
+  <button
+    name="aboutUs"
+    mat-icon-button
+    matTooltipHideDelay="1000"
+    (click)="openAboutYouDialog()"
+    matBadgeColor="accent"
+  >
+    <mat-icon>help_outline</mat-icon>
+  </button>
+
   <mat-menu #menu="matMenu">
     <button
       name="lang.value"
@@ -205,4 +217,6 @@
       <span>{{ lang.label }}</span>
     </button>
   </mat-menu>
+
+  
 </div>

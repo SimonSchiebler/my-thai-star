@@ -99,7 +99,8 @@
     "orders": "Orders",
     "order-archive":"Archive",
     "reservations": "Reservations",
-    "admin": "Admin",
+    "admin": "Users",
+    "devices": "Devices",
     "userActions": {
       "user": "User",
       "pairing": "Set two-factor authentication",
@@ -191,6 +192,10 @@
         "userRoleIdH": "Role",
         "deleteButtonH": "Delete"
       },
+      "deviceTable":{
+        "tableNumber":"Table Number",
+        "deviceId":"Device Id"
+      },
       "successBarCreated": {
         "stringpart1": "User ",
         "stringpart2":" with id number ",
@@ -219,7 +224,10 @@
         "extrasH": "Extra",
         "quantityH": "Quantity",
         "priceH": "Price"
-      }
+      },
+      "snackbarInHouse": "Order from Table ",
+      "snackbarDelivery": "Delivery to ",
+      "snackbarEnd": " was moved into order-archive"
     },
     "reservations": {
       "title": "Reservations",
@@ -238,7 +246,7 @@
       "canceledH": "Canceled"
     },
     "waitersHelp":{
-      "help": "Help!",
+      "help": "Help",
       "bill": "Bill"
     },
     "orderPayStates":{
@@ -261,7 +269,11 @@
       "addressLineH":"Address line",
       "tableNotDefinedH": "---",
       "idH":"Id number",
-      "waitersHelpH":"Waiters's help"
+      "waitersHelpH":"table needs",
+      "DeliveryFor": "Delivery for ",
+      "deleteH": "Delete",
+      "snackbarStart": "Booking ",
+      "snackbarEnd": " was deleted."
     }
   },
   "aboutYou": {
@@ -276,6 +288,6 @@
     "sunday": "Sunday",
     "location": "Our location",
     "restday": " is a rest day",
-    "footer": "This is just a template AboutYou page due to the fact, that the restaurant My-Thai-Star does not exist."
+    "footer": "This is just a template AboutYou page due to the fact, that the restaurant 'My-Thai-Star' does not exist."
   }
 }

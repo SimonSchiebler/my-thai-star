@@ -1,0 +1,26 @@
+<mat-card>
+    <mat-card-title>{{'main.devices' | transloco}}</mat-card-title>
+    <mat-divider></mat-divider>
+
+
+    <table mat-table [dataSource]="tables" class="mat-elevation-z8">
+
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> {{"cockpit.admin.deviceTable.tableNumber" | transloco}} </th>
+          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+        </ng-container>
+      
+        <ng-container matColumnDef="deviceId">
+          <th mat-header-cell *matHeaderCellDef> {{"cockpit.admin.deviceTable.deviceId" | transloco}} </th>
+          <td mat-cell *matCellDef="let element"> 
+            <input matInput (click)="$event.target.select()" (keyup.enter)="updateDeviceId($event, element)" [(ngModel)]=element.deviceId> </td>
+        </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+
+    
+</mat-card>
