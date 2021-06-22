@@ -328,7 +328,7 @@ const OrderIntentHandler = {
         handlerInput.requestEnvelope.request.intent.slots.confirmation
           .resolutions.resolutionsPerAuthority[0].values[0].value.name === "no"
       ) {
-        if (!sessionAttributes) {
+        if (!sessionAttributes.tableId) {
           if (sessionAttributes.wantsToOrder === undefined) {
             await util.createDelivery(
               name,
@@ -421,7 +421,7 @@ const AddressIntentHandler = {
     const messages = getResponseObject(
       handlerInput.requestEnvelope
     ).AddressIntentHandler;
-    if (!sessionAttributes) {
+    if (!sessionAttributes.tableId) {
       return handlerInput.responseBuilder.speak(messages.address).getResponse();
     } else {
       return handlerInput.responseBuilder
