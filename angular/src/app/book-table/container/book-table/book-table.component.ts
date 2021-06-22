@@ -123,9 +123,9 @@ export class BookTableComponent implements OnInit {
       .afterClosed()
       .subscribe((res: boolean) => {
         if (res) {
-          this.invitationForm.reset();
           this.invitationModel = [];
           checkbox.checked = false;
+          this.ngOnInit()   
         } 
       });
   }
