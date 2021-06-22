@@ -37,9 +37,11 @@ const LaunchRequestHandler = {
     const table = await util.getTableByDeviceId(
       handlerInput.requestEnvelope.context.System.device.deviceId
     );
+    console.log("his is the table \n" + JSON.stringify(table)  + "\n \n")
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
     sessionAttributes.tableId = table.id;
+    console.log("these are the session attributes \n" + JSON.stringify(sessionAttributes)  + "\n \n")
     handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
     const messages = getResponseObject(
