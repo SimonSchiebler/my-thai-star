@@ -79,6 +79,9 @@ module.exports.messages = {
     noMoreDishes: "Sorry there are no more dishes on the menu",
     endOfMenu: "Thats everything that is on the menu.",
     endingPhrase: "Hope you heared something you liked",
+    askForItem: "What item do you want to add to your order?",
+    askForItemCount: "How many times would you like to order that item",
+    askOneMore: "Do you want to add another item from the Menu?",
   },
   HelpIntentHandler: {
       helpMessageHome: "I currently have following commands: order food, reserve a table and whats the state of my order.",

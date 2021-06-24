@@ -175,7 +175,7 @@ const OrderIntentHandler = {
     if (!sessionAttributes.orderlist) sessionAttributes.orderlist = [];
 
     const lastAction = sessionAttributes.lastAction;
-
+    console.log(sessionAttributes.orderlist);
     switch (lastAction) {
       case "setDish":
         if (
@@ -221,46 +221,6 @@ const OrderIntentHandler = {
       handlerInput.requestEnvelope.request.intent.slots.confirmation.value ===
       undefined
     ) {
-      if (!dish && (oneMoreOrder === "yes" || oneMoreOrder === undefined)) {
-        sessionAttributes.lastAction = "setDish";
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("dish")
-          .speak(messages.askForItem)
-          .getResponse();
-      } else if (
-        !amount &&
-        (oneMoreOrder === "yes" || oneMoreOrder === undefined)
-      ) {
-        sessionAttributes.lastAction = "setAmount";
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("amount")
-          .speak(messages.askForItemCount)
-          .getResponse();
-      } else if (
-        amount &&
-        dish &&
-        (oneMoreOrder === "yes" || oneMoreOrder === undefined)
-      ) {
-        sessionAttributes.lastAction = "setCompletedOrder";
-
-        sessionAttributes.orderlist.push({ dish, amount });
-
-        delete sessionAttributes.amount;
-        delete sessionAttributes.dish;
-        delete sessionAttributes.completedOrder;
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("completedOrder")
-          .speak(messages.askOneMore)
-          .getResponse();
-      } else if (amount && dish && oneMoreOrder === "no") {
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("confirmation")
-          .speak(messages.askRepeatOrder)
-          .getResponse();
-      }
       if (!dish && (oneMoreOrder === "yes" || oneMoreOrder === undefined)) {
         sessionAttributes.lastAction = "setDish";
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
@@ -473,22 +433,21 @@ const BillIntentHandler = {
     ).BillIntentHandler;
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
-    if(!sessionAttributes.tableId) {
+    if (!sessionAttributes.tableId) {
       return handlerInput.responseBuilder
         .speak(messages.inhouseRestriction)
         .getResponse();
     } else {
       const { deviceId } = handlerInput.requestEnvelope.context.System.device;
       console.log(deviceId);
-  
+
       await util.setWaiterState(1, deviceId);
-  
+
       return handlerInput.responseBuilder
         .speak(messages.billRequested)
         .getResponse();
     }
-    },
-    
+  },
 };
 
 const MenuIntentHandler = {
@@ -538,9 +497,7 @@ const MenuIntentHandler = {
       handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
       if (dishes === undefined) {
-        return handlerInput.responseBuilder
-          .speak(messages.noMoreDishes)
-          .getResponse();
+        speakOutput = messages.noMoreDishes;
       } else if (dishes.content.length < size) {
         var i;
         var speakOutput = "";
@@ -548,7 +505,6 @@ const MenuIntentHandler = {
           speakOutput += dishes.content[i].dish.name + ", ";
         }
         speakOutput += messages.endOfMenu;
-        return handlerInput.responseBuilder.speak(speakOutput).getResponse();
       } else if (dishes.content.length === size) {
         var i;
         var speakOutput = "";
@@ -565,9 +521,50 @@ const MenuIntentHandler = {
       handlerInput.requestEnvelope.request.intent.slots.hearMore.resolutions
         .resolutionsPerAuthority[0].values[0].value.name === "no"
     ) {
-      return handlerInput.responseBuilder
-        .speak(messages.endingPhrase)
-        .getResponse();
+      speakOutput = messages.endingPhrase;
+    }
+    if (sessionAttributes.orderlist) {
+      if (sessionAttributes.lastAction === "setDish") {
+        speakOutput += messages.askForItem;
+        sessionAttributes.page = 0;
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("dish", {
+            name: "OrderIntent",
+            confirmationStatus: "CONFIRMED",
+            slots: {},
+          })
+          .speak(speakOutput)
+          .getResponse();
+      } else if (sessionAttributes.lastAction === "setAmount") {
+        speakOutput += messages.askForItemCount;
+        sessionAttributes.page = 0;
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("amount", {
+            name: "OrderIntent",
+            confirmationStatus: "CONFIRMED",
+            slots: {},
+          })
+          .speak(speakOutput)
+          .getResponse();
+      } else if (
+        sessionAttributes.lastAction === "setCompletedOrder")
+       {
+        speakOutput += messages.askOneMore;
+        sessionAttributes.page = 0;
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective("completedOrder", {
+            name: "OrderIntent",
+            confirmationStatus: "CONFIRMED",
+            slots: {},
+          })
+          .speak(speakOutput)
+          .getResponse();
+      }
+    } else {
+      return handlerInput.responseBuilder.speak(speakOutput).getResponse();
     }
   },
 };
@@ -585,16 +582,15 @@ const HelpIntentHandler = {
     ).HelpIntentHandler;
     const sessionAttributes =
       handlerInput.attributesManager.getSessionAttributes();
-      if(!sessionAttributes.tableId){
-        return handlerInput.responseBuilder
-      .speak(messages.helpMessageHome)
-      .getResponse();
-      } else {
-        return handlerInput.responseBuilder
-      .speak(messages.helpMessageInhouse)
-      .getResponse();
-      }
-    
+    if (!sessionAttributes.tableId) {
+      return handlerInput.responseBuilder
+        .speak(messages.helpMessageHome)
+        .getResponse();
+    } else {
+      return handlerInput.responseBuilder
+        .speak(messages.helpMessageInhouse)
+        .getResponse();
+    }
   },
 };
 const CancelAndStopIntentHandler = {

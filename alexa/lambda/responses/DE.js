@@ -79,10 +79,13 @@ module.exports.messages = {
       noMoreDishes: "Es gibt keine weiteren Gerichte auf der Karte.",
       endOfMenu: "Das ist alles was auf der Karte steht.",
       endingPhrase: "Ich hoffe es war etwas nach deinem Geschmack dabei.",
+      askForItem: "Welches Gericht möchtes du hinzufügen?",
+      askForItemCount: "Wie oft möchtest du das Gericht hinzufügen?",
+      askOneMore: "Möchtest du ein weiteres Gericht der Karte hinzufügen?",
     },
     HelpIntentHandler: {
-        helpMessageHome: "Ich kann folgende Befehle ausführen: Menü, Bestellen, Reservieren, Bestellstatus und Addresse.",
-        helpMessageInhouse: "Ich kann folgende Befehle ausführen: Menü, Bestellen, Kellner rufen und Rechnung erbitten."
+        helpMessageHome: "Ich kann folgende Befehle ausführen: Karte, Bestellen, Reservieren, Bestellstatus und Addresse.",
+        helpMessageInhouse: "Ich kann folgende Befehle ausführen: Karte, Bestellen, Kellner rufen und Rechnung erbitten."
     },
     CancelAndStopIntentHandler:{
       bye:"Auf Wiedersehen!"
