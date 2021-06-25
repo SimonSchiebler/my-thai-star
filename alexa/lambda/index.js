@@ -175,7 +175,6 @@ const OrderIntentHandler = {
     if (!sessionAttributes.orderlist) sessionAttributes.orderlist = [];
 
     const lastAction = sessionAttributes.lastAction;
-    console.log(sessionAttributes.orderlist);
     switch (lastAction) {
       case "setDish":
         if (
@@ -198,6 +197,7 @@ const OrderIntentHandler = {
       case "setCompletedOrder":
         sessionAttributes.oneMoreOrder =
           handlerInput.requestEnvelope.request.intent.slots.completedOrder.resolutions.resolutionsPerAuthority[0].values[0].value.name;
+        sessionAttributes.lastAction = undefined;
         break;
       default:
         break;
@@ -553,6 +553,9 @@ const MenuIntentHandler = {
        {
         speakOutput += messages.askOneMore;
         sessionAttributes.page = 0;
+        orderlist = sessionAttributes.orderlist;
+        sessionAttributes.dish = orderlist[orderlist.length - 1].dish.name;
+        sessionAttributes.amount = orderlist[orderlist.length - 1].amount;
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
           .addElicitSlotDirective("completedOrder", {
