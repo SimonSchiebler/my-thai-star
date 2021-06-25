@@ -73,12 +73,20 @@
             <ng-container matColumnDef="users.deleteButton">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{columns[3].label}} </th>
                 <td mat-cell *matCellDef="let element"> 
-                    <button  
-                        name="deleteButton"
-                        mat-icon-button
-                        (click)="clickDelete(element)" >
-                        <mat-icon>delete</mat-icon>
-                    </button>
+                    <ng-template *ngIf="(auth.userName$ | async) == element.username; then disabledButton else enabledButton"></ng-template>
+                    <ng-template  #disabledButton> 
+                        <button mat-button disabled> 
+                            <mat-icon [ngStyle]="{'color':'lightgrey'}">delete</mat-icon>
+                        </button>
+                    </ng-template > 
+                    <ng-template  #enabledButton> 
+                        <button  
+                            name="deleteButton"
+                            mat-icon-button
+                            (click)="clickDelete(element)" >
+                            <mat-icon>delete</mat-icon>        
+                        </button>
+                    </ng-template >
                 </td>
             </ng-container>
 

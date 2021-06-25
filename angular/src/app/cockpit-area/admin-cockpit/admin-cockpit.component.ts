@@ -12,6 +12,7 @@ import { RegisterDialogComponent } from './register-dialog/register-dialog.compo
 import { DeleteUserDialogComponent } from './delete-user-dialog/delete-user-dialog.component';
 import { UserInfo } from 'app/shared/backend-models/interfaces';
 import { AdminService } from '../services/admin.service';
+import { AuthService } from '../../core/authentication/auth.service';
 import { MatTable } from '@angular/material/table';
 
 
@@ -31,6 +32,7 @@ export class AdminCockpitComponent implements OnInit {
 
   @ViewChild('pagingBar', { static: true }) pagingBar: MatPaginator;
 
+  currentUser: string;
   columns: any[];
 
   roleNames = [
@@ -62,7 +64,8 @@ export class AdminCockpitComponent implements OnInit {
     private translocoService: TranslocoService,
     private configService: ConfigService,
     private adminService: AdminService,
-    public matDialog: MatDialog
+    public matDialog: MatDialog,
+    public auth: AuthService
   ) {
     this.pageSizes = this.configService.getValues().pageSizes;
   }
