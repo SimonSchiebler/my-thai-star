@@ -13,8 +13,7 @@
     "clearFilters": "Clear Filters",
     "applyFilters": "Apply Filters",
     "removeComment": "Remove Comment",
-    "addComment": "Add comment",
-    "addUser": "Add User"
+    "addComment": "Add comment"
   },
   "table": {
     "rowsPage": "Rows per page",
@@ -40,6 +39,8 @@
     "orderID": "To order a menu it is necessary to obtain a booking id. Either you enter your already known booking id or you book a table",
     "passwordError": "Minimum 6 signs",
     "confirmPassword":"Password Mismatch",
+    "nameError":"Enter a unique username",
+    "emailError": "Enter a correct email address",
     "authAlerts": {
       "loginSuccess": "Login successful",
       "registerSuccess": "Register successful",
@@ -190,7 +191,8 @@
         "usernameH": "Username",
         "idH": "User",
         "userRoleIdH": "Role",
-        "deleteButtonH": "Delete"
+        "deleteButtonH": "Delete",
+        "addUser": "Add User"
       },
       "deviceTable":{
         "tableNumber":"Table Number",

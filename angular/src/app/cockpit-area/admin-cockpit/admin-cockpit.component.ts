@@ -57,7 +57,7 @@ export class AdminCockpitComponent implements OnInit {
 
   filters: FilterAdmin = {
     username: undefined,
-    email: undefined,
+    role: undefined,
   };
 
   constructor(

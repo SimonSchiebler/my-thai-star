@@ -8,17 +8,21 @@
 
             <div class="formRow">
                 <div class="formMobileRow">
-                   
+
                     <mat-form-field color="accent" class="searchBy">
                         <input matInput [placeholder]="'formFields.username' | transloco" [(ngModel)]="filters.username" name="username">
                     </mat-form-field>
-                
+
                 </div>
 
                 <div class="formDesktopRow">
 
                     <mat-form-field color="accent" class="searchBy">
                         <input matInput [placeholder]="'formFields.username' | transloco" [(ngModel)]="filters.username" name="username">
+                    </mat-form-field>
+
+                    <mat-form-field color="accent" class="searchBy">
+                        <input matInput [placeholder]="'cockpit.admin.table.userRoleIdH' | transloco" [(ngModel)]="filters.role" name="role">
                     </mat-form-field>
 
                 </div>
@@ -32,7 +36,7 @@
         </mat-expansion-panel>
 
     </div>
-    
+
 </form>
 
 <mat-progress-bar
@@ -44,7 +48,6 @@
 <mat-card>
     <mat-card-title>{{'cockpit.admin.table.title' | transloco}}</mat-card-title>
     <mat-divider></mat-divider>
-
 
     <div class="tableContainer">
         <table mat-table [dataSource]="users" matSort (matSortChange)="sort($event)">
@@ -93,7 +96,7 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-        
+
         <br/>
 
         <ng-container matColumnDef="users.addButton">
@@ -102,11 +105,9 @@
                 mat-button
                 (click)="clickAdd()" >
                 <mat-icon>person_add</mat-icon>
-                {{'buttons.addUser' | transloco}}
+                {{'cockpit.admin.table.addUser' | transloco}}
             </button>
           </ng-container>
     </div>
 
-
-    
 </mat-card>
