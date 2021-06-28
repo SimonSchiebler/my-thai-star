@@ -21,9 +21,9 @@
                         <input matInput [placeholder]="'formFields.username' | transloco" [(ngModel)]="filters.username" name="username">
                     </mat-form-field>
 
-                    <mat-form-field color="accent" class="searchBy">
+                    <!-- <mat-form-field color="accent" class="searchBy">
                         <input matInput [placeholder]="'cockpit.admin.table.userRoleIdH' | transloco" [(ngModel)]="filters.role" name="role">
-                    </mat-form-field>
+                    </mat-form-field> -->
 
                 </div>
             </div>
@@ -99,6 +99,7 @@
 
         <br/>
 
+        <!-- TODO: Button and paginator on same hight-level -->
         <ng-container matColumnDef="users.addButton">
             <button style="border: 1px solid slategray;"
                 name="addButton"
@@ -107,7 +108,17 @@
                 <mat-icon>person_add</mat-icon>
                 {{'cockpit.admin.table.addUser' | transloco}}
             </button>
-          </ng-container>
-    </div>
+        </ng-container>
+    
 
+        <mat-paginator
+        #pagingBar
+        [length]="totalUsers"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizes"
+        [showFirstLastButtons]="true"
+        (page)="page($event)"
+        >
+        </mat-paginator>
+    </div>
 </mat-card>

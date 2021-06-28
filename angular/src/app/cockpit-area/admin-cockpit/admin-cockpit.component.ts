@@ -32,7 +32,6 @@ export class AdminCockpitComponent implements OnInit {
 
   @ViewChild('pagingBar', { static: true }) pagingBar: MatPaginator;
 
-  currentUser: string;
   columns: any[];
 
   roleNames = [
@@ -113,13 +112,17 @@ export class AdminCockpitComponent implements OnInit {
     filters.reset();
     this.applyFilters();
     //this.pagingBar.firstPage();
-    //Pages sind auch nicht realisiert, deswegen auskommentiert
   }
 
-  // Funktioniert nicht, Server nimmt Anfrage nicht an, 500 Fehler
-  // Eventuell für die Anfrage mit Filters andere API nutzen
-  // Kp ob diese schon existiert
-  // getOrders() in admin.service muss entspechend angepasst werden
+  page(pagingEvent: PageEvent): void {
+    this.pageable = {
+      pageSize: pagingEvent.pageSize,
+      pageNumber: pagingEvent.pageIndex,
+      sort: this.pageable.sort,
+    };
+    this.applyFilters();
+  }
+
   sort(sortEvent: Sort): void {
     this.sorting = [];
     if (sortEvent.direction) {
@@ -144,6 +147,7 @@ export class AdminCockpitComponent implements OnInit {
         this.users.splice(index, 1);
       }
       this.table.renderRows();
+      this.applyFilters();
     });
   }
 
@@ -159,6 +163,7 @@ export class AdminCockpitComponent implements OnInit {
       if(user.id) {
         this.users.push(user);
         this.table.renderRows();
+        this.applyFilters();
       }
     });
   }
