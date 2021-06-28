@@ -73,7 +73,16 @@ export class OrderDialogComponent implements OnInit {
     this.datat.push(this.data.booking);
     if(this.data.address) {
       this.dataa.push(this.data.address);
-      this.addressLine = this.data.address.addressLine1 + "  " + this.data.address.addressLine2 + "  " + this.data.address.addressLine3
+      if(!this.data.address.addressLine1){
+        this.data.address.addressLine1 = ""
+      }
+      if(!this.data.address.addressLine2){
+        this.data.address.addressLine2 = ""
+      }
+      if(!this.data.address.addressLine3){
+        this.data.address.addressLine3 = ""
+      }
+      this.addressLine = this.data.address.addressLine1 + " " + this.data.address.addressLine2 + " " + this.data.address.addressLine3
     }    
     this.filter();
   }

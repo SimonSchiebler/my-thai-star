@@ -330,7 +330,7 @@ const OrderIntentHandler = {
       ) {
         if (!sessionAttributes.tableId) {
           if (sessionAttributes.wantsToOrder === undefined) {
-            await util.createDelivery(
+            util.createDelivery(
               name,
               email,
               sessionAttributes.orderlist,
@@ -358,7 +358,7 @@ const OrderIntentHandler = {
               .getResponse();
           }
         } else {
-          await util.addOrderInhouse(sessionAttributes.orderlist, deviceId);
+          util.addOrderInhouse(sessionAttributes.orderlist, deviceId);
 
           return handlerInput.responseBuilder
             .speak(messages.orderInhouseConfirmation)
