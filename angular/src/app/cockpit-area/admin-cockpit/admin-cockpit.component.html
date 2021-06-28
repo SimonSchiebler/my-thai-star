@@ -99,26 +99,38 @@
 
         <br/>
 
-        <!-- TODO: Button and paginator on same hight-level -->
-        <ng-container matColumnDef="users.addButton">
-            <button style="border: 1px solid slategray;"
-                name="addButton"
-                mat-button
-                (click)="clickAdd()" >
-                <mat-icon>person_add</mat-icon>
-                {{'cockpit.admin.table.addUser' | transloco}}
-            </button>
-        </ng-container>
+        <div id="container">
+            <div>
+                <ng-container matColumnDef="users.addButton">
+                    <button style="border: 1px solid slategray;"
+                        name="addButton"
+                        mat-button
+                        (click)="clickAdd()" >
+                        <mat-icon>person_add</mat-icon>
+                        {{'cockpit.admin.table.addUser' | transloco}}
+                    </button>
+                </ng-container>
+            </div>
+            <div>
+                <mat-paginator
+                    #pagingBar
+                    [length]="totalUsers"
+                    [pageSize]="pageSize"
+                    [pageSizeOptions]="pageSizes"
+                    [showFirstLastButtons]="true"
+                    (page)="page($event)"
+                >  
+                </mat-paginator>
+            </div>
+
+            
+
+            
+
+        </div>
+        
     
 
-        <mat-paginator
-        #pagingBar
-        [length]="totalUsers"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="pageSizes"
-        [showFirstLastButtons]="true"
-        (page)="page($event)"
-        >
-        </mat-paginator>
+        
     </div>
 </mat-card>
