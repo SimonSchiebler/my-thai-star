@@ -52,10 +52,8 @@
   <!-- Buttons -->
   <div class="align-right">
     <mat-dialog-actions>
-      <button mat-button type="submit" [disabled]="!(form.valid && checkbox.checked)">Add</button>
-      <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+      <button mat-button type="submit" [disabled]="!(form.valid && checkbox.checked)">{{'buttons.add' | transloco}}</button>
+      <button mat-button type="button" (click)="dialogRef.close()">{{'buttons.cancel' | transloco}}</button>
     </mat-dialog-actions>
   </div>
-  
-
 </form>

@@ -1,5 +1,6 @@
 {
   "buttons": {
+    "add":"Hinzufügen",
     "cancel": "Abbrechen",
     "apply": "Bestätigen",
     "close": "Schließen",
