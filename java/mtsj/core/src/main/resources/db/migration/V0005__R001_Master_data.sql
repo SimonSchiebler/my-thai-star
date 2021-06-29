@@ -8,12 +8,6 @@ INSERT INTO User(id, modificationCounter, username, password, twoFactorStatus, e
 INSERT INTO User(id, modificationCounter, username, password, twoFactorStatus, email, idRole) VALUES (2, 1, 'manager', '{bcrypt}$2a$10$IsTlZemkiPKE2gjtnSMlJOX5.uitNHXNRpLYyvyxNbHEhjpY.XdTq', false, 'manager@mail.com', 2);
 INSERT INTO User(id, modificationCounter, username, password, twoFactorStatus, email, idRole) VALUES (3, 1, 'admin', '{bcrypt}$2a$10$fhcb1hvSNRRXBnoRocxLU.S85hoEH2UgBfnF4NP0G8PuFy6eD6cle', false, 'admin@gmail.com', 3);
 
-INSERT INTO User(id, modificationCounter, username, password, twoFactorStatus, email, idRole) VALUES (4, 1, 'user1', 'user1', false, 'user1@mail.com', 0);
-INSERT INTO User(id, modificationCounter, username, password, twoFactorStatus, email, idRole) VALUES (5, 1, 'user2', 'user2', false, 'user2@mail.com', 0);
-INSERT INTO User(id, modificationCounter, username, password, twoFactorStatus, email, idRole) VALUES (6, 1, 'user3', 'user3', false, 'user3@mail.com', 0);
-INSERT INTO User(id, modificationCounter, username, password, twoFactorStatus, email, idRole) VALUES (7, 1, 'user4', 'user4', false, 'user4@mail.com', 0);
-INSERT INTO User(id, modificationCounter, username, password, twoFactorStatus, email, idRole) VALUES (8, 1, 'user5', 'user5', false, 'user5@mail.com', 0);
-
 INSERT INTO WaitersHelp (id,modificationCounter,waitersHelpName) VALUES (0,0,'good');
 INSERT INTO WaitersHelp (id,modificationCounter,waitersHelpName) VALUES (1,0,'bill');
 INSERT INTO WaitersHelp (id,modificationCounter,waitersHelpName) VALUES (2,0,'waiter');
