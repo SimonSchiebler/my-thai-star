@@ -219,6 +219,16 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
   public BookingEto saveBooking(BookingCto booking) {
 
     Objects.requireNonNull(booking, "booking");
+    
+	if(booking.getBooking().getDelivery() == null) {
+		if(booking.getBooking().getOrderId() != null && getOrderDao().find(booking.getBooking().getOrderId()).getAddress() != null) {
+			booking.getBooking().setDelivery(true);
+		} else {
+			booking.getBooking().setDelivery(false);
+			booking.getBooking().setTableId(0L);
+		}
+	}
+    
     BookingEntity bookingEntity = getBeanMapper().map(booking.getBooking(), BookingEntity.class);
 
     bookingEntity.setCanceled(false);
@@ -226,13 +236,7 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
 
     List<InvitedGuestEntity> invited = getBeanMapper().mapList(booking.getInvitedGuests(), InvitedGuestEntity.class);
 
-	if(booking.getBooking().getDelivery() == null) {		
-		if(getOrderDao().find(booking.getBooking().getOrderId()).getAddress() != null) {
-			booking.getBooking().setDelivery(true);
-		} else {
-			booking.getBooking().setDelivery(false);
-		}
-	}
+
 
     for (InvitedGuestEntity invite : invited) {
       try {
