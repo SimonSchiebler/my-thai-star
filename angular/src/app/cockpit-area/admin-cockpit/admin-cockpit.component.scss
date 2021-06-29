@@ -18,7 +18,7 @@
       padding: 8px;
     }
   }
-  
+
   .formMobileRow {
     flex: 1;
     align-items: center;
@@ -40,7 +40,7 @@
   }
   
   th {
-    width: 33.33%;
+    width: 25%;
     font-weight: bold;
   }
   
@@ -50,6 +50,18 @@
   
   .noResults {
     padding: 16px;
+  }
+
+  .mat-cell {
+    text-align: center;
+    justify-content:center;
+    width: 25%;
+  }
+  
+  ::ng-deep .mat-sort-header-container {
+    display:flex;
+    justify-content:center;
+
   }
   
   @media (max-width: 599px) {

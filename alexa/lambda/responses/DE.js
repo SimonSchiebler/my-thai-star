@@ -44,7 +44,7 @@ module.exports.messages = {
         for (const order of orders) {
           state = states[order.orders[0].stateId];
           var t = new Date(1970, 0, 1);
-          t.setSeconds(parseInt(orders.creationDate) + 7200);
+          t.setSeconds(parseInt(order.creationDate) + 7200);
           var date =
             t.toDateString() + " um " + t.getHours() + ":" + t.getMinutes();
           res +=

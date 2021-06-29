@@ -9,20 +9,25 @@ import { TableView } from 'app/shared/view-models/interfaces';
   styleUrls: ['./device-administration.component.scss'],
 })
 export class DeviceAdministrationComponent implements OnInit {
-  tables: TableView[]
+  tables: TableView[];
 
   displayedColumns: string[] = ['id', 'deviceId'];
-  constructor(private adminService: AdminService, private snackBarService: SnackBarService) {}
-  updateDeviceId(event, element:TableView){
+  constructor(
+    private adminService: AdminService,
+    private snackBarService: SnackBarService,
+  ) {}
+  updateDeviceId(event, element: TableView) {
     event.target.blur();
     this.adminService.setTable(element).subscribe((response) => {
-      this.snackBarService.openSnack("success",3000,"green")
-    })
+      this.snackBarService.openSnack('success', 3000, 'green');
+      this.adminService.getTables().subscribe((tables) => {
+        this.tables = tables.content;
+      });
+    });
   }
   ngOnInit(): void {
     this.adminService.getTables().subscribe((tables) => {
       this.tables = tables.content;
-
     });
   }
 }

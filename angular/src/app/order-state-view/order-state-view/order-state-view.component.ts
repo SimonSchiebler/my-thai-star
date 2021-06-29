@@ -78,7 +78,16 @@ export class OrderStateViewComponent implements OnInit, OnDestroy{
 
         if(order.address) {
           this.address.push(order.address);
-          this.addressLine = order.address.addressLine1 + "\n" + order.address.addressLine2 + "\n" + order.address.addressLine2
+          if(!order.address.addressLine1){
+            order.address.addressLine1 = ""
+          }
+          if(!order.address.addressLine2){
+            order.address.addressLine2 = ""
+          }
+          if(!order.address.addressLine3){
+            order.address.addressLine3 = ""
+          }
+          this.addressLine = order.address.addressLine1 + " " + order.address.addressLine2 + " " + order.address.addressLine2
         }
       });
 
