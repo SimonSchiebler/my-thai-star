@@ -12,6 +12,7 @@ import { RegisterDialogComponent } from './register-dialog/register-dialog.compo
 import { DeleteUserDialogComponent } from './delete-user-dialog/delete-user-dialog.component';
 import { UserInfo } from 'app/shared/backend-models/interfaces';
 import { AdminService } from '../services/admin.service';
+import { AuthService } from '../../core/authentication/auth.service';
 import { MatTable } from '@angular/material/table';
 
 
@@ -55,14 +56,15 @@ export class AdminCockpitComponent implements OnInit {
 
   filters: FilterAdmin = {
     username: undefined,
-    email: undefined,
+    role: undefined,
   };
 
   constructor(
     private translocoService: TranslocoService,
     private configService: ConfigService,
     private adminService: AdminService,
-    public matDialog: MatDialog
+    public matDialog: MatDialog,
+    public auth: AuthService
   ) {
     this.pageSizes = this.configService.getValues().pageSizes;
   }
@@ -110,13 +112,17 @@ export class AdminCockpitComponent implements OnInit {
     filters.reset();
     this.applyFilters();
     //this.pagingBar.firstPage();
-    //Pages sind auch nicht realisiert, deswegen auskommentiert
   }
 
-  // Funktioniert nicht, Server nimmt Anfrage nicht an, 500 Fehler
-  // Eventuell für die Anfrage mit Filters andere API nutzen
-  // Kp ob diese schon existiert
-  // getOrders() in admin.service muss entspechend angepasst werden
+  page(pagingEvent: PageEvent): void {
+    this.pageable = {
+      pageSize: pagingEvent.pageSize,
+      pageNumber: pagingEvent.pageIndex,
+      sort: this.pageable.sort,
+    };
+    this.applyFilters();
+  }
+
   sort(sortEvent: Sort): void {
     this.sorting = [];
     if (sortEvent.direction) {
@@ -141,6 +147,7 @@ export class AdminCockpitComponent implements OnInit {
         this.users.splice(index, 1);
       }
       this.table.renderRows();
+      this.applyFilters();
     });
   }
 
@@ -156,6 +163,7 @@ export class AdminCockpitComponent implements OnInit {
       if(user.id) {
         this.users.push(user);
         this.table.renderRows();
+        this.applyFilters();
       }
     });
   }

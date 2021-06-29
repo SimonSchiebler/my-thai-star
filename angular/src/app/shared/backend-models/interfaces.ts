@@ -121,7 +121,7 @@ export class Role {
 
 export class FilterAdmin {
     username: string;
-    email: string;
+    role: number;
     pageable?: Pageable; 
 }
 
