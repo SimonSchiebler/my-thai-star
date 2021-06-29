@@ -142,4 +142,10 @@ public class BookingmanagementRestServiceImpl implements BookingmanagementRestSe
     return this.bookingmanagement.findBookingByDeviceId(table);
   }
 
+  @Override
+  public Page<BookingCto> findActiveBookings(BookingSearchCriteriaTo criteria) {
+
+    return this.bookingmanagement.findActiveBookings(criteria);
+  }
+
 }
