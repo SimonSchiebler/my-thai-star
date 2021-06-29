@@ -1,11 +1,13 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
+ 
+    <h3>{{'cockpit.admin.table.addUser' | transloco}}</h3>
 
   <mat-dialog-content>
 
     <!-- Username -->
     <mat-form-field color="accent"> 
       <input matInput formControlName="username" [placeholder]="'formFields.name' | transloco">
-      <mat-error>{{ 'cockpitArea.nameError' | transloco }}</mat-error>
+      <mat-error>{{ 'alerts.nameError' | transloco }}</mat-error>
     </mat-form-field>
 
     <!-- UserRole -->
@@ -20,7 +22,7 @@
     <!-- Email -->
     <mat-form-field>
       <input matInput formControlName="email" [placeholder]="'formFields.email' | transloco">
-      <mat-error>{{ 'cockpitArea.emailError' | transloco }}</mat-error>
+      <mat-error>{{ 'alerts.emailError' | transloco }}</mat-error>
     </mat-form-field>
 
     <!-- Password -->
@@ -50,10 +52,8 @@
   <!-- Buttons -->
   <div class="align-right">
     <mat-dialog-actions>
-      <button mat-button type="submit" [disabled]="!(form.valid && checkbox.checked)">Add</button>
-      <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+      <button mat-button type="submit" [disabled]="!(form.valid && checkbox.checked)">{{'buttons.add' | transloco}}</button>
+      <button mat-button type="button" (click)="dialogRef.close()">{{'buttons.cancel' | transloco}}</button>
     </mat-dialog-actions>
   </div>
-  
-
 </form>
