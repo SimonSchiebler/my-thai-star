@@ -67,7 +67,7 @@ INSERT INTO Booking(id, modificationCounter, idUser, name, bookingToken, comment
 VALUES(7, 1, 0, 'user0', '260119911825666', 'Booking Type GSR', 'user0@mail.com', DATEADD('DAY', 0, CURRENT_TIMESTAMP), DATEADD('DAY', 0, DATEADD('HOUR', 1, CURRENT_TIMESTAMP)), CURRENT_TIMESTAMP, false, 0, 0, 9, TRUE, 0);
 
 -- for Alexa call waiter
-INSERT INTO Booking(id, modificationCounter, idUser, name, bookingToken, comment, email, bookingDate, expirationDate, creationDate, canceled, bookingType, idTable, idOrder, delivery, idHelp)
-VALUES(8, 1, 0, 'user0', '260119911825666', 'Booking Type GSR', 'alexa1991@mail.com', DATEADD('DAY', 0, CURRENT_TIMESTAMP), DATEADD('DAY', 0, DATEADD('HOUR', 1, CURRENT_TIMESTAMP)), DATEADD('DAY', 0, CURRENT_TIMESTAMP), false, 0, 0, 0, FALSE, 0);
-INSERT INTO Booking(id, modificationCounter, idUser, name, bookingToken, comment, email, bookingDate, expirationDate, creationDate, canceled, bookingType, idTable, idOrder, delivery, idHelp)
-VALUES(9, 1, 0, 'user0', '260119911825666', 'Booking Type GSR', 'alexa2000@mail.com', DATEADD('DAY', 0, CURRENT_TIMESTAMP), DATEADD('DAY', 0, DATEADD('HOUR', 1, CURRENT_TIMESTAMP)), CURRENT_TIMESTAMP, false, 0, 0, 0, FALSE, 0);
+INSERT INTO Booking(id, modificationCounter, idUser, name, bookingToken, comment, email, bookingDate, expirationDate, creationDate, canceled, bookingType, idTable, idOrder, delivery,idHelp)
+VALUES(8, 1, 0, 'user0', '260119911825666', 'Booking Type GSR', 'alexa1991@mail.com', DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('DAY', 5, DATEADD('HOUR', -1, CURRENT_TIMESTAMP)), DATEADD('DAY', -3, CURRENT_TIMESTAMP), false, 0, 7, null, FALSE, 2);
+INSERT INTO Booking(id, modificationCounter, idUser, name, bookingToken, comment, email, bookingDate, expirationDate, creationDate, canceled, bookingType, idTable, idOrder, delivery,idHelp)
+VALUES(9, 1, 0, 'user0', '260119911825666', 'Booking Type GSR', 'alexa2000@mail.com', DATEADD('DAY', 5, CURRENT_TIMESTAMP), DATEADD('DAY', 5, DATEADD('HOUR', -1, CURRENT_TIMESTAMP)), CURRENT_TIMESTAMP, false, 0, 7, null, FALSE, 0);
