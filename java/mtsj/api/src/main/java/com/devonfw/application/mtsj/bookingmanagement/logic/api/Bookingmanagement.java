@@ -3,8 +3,6 @@ package com.devonfw.application.mtsj.bookingmanagement.logic.api;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import javax.ws.rs.PathParam;
-
 import org.springframework.data.domain.Page;
 
 import com.devonfw.application.mtsj.bookingmanagement.common.api.to.BookingCto;
@@ -68,6 +66,14 @@ public interface Bookingmanagement {
    * @return the {@link List} of matching {@link BookingEto}s.
    */
   Page<BookingCto> findBookingsByPost(BookingSearchCriteriaTo criteria);
+
+  /**
+   * Returns a paginated list of Bookings matching the search criteria. Needs Authorization.
+   *
+   * @param criteria the {@link BookingSearchCriteriaTo}.
+   * @return the {@link List} of matching {@link BookingEto}s.
+   */
+  Page<BookingCto> findActiveBookings(BookingSearchCriteriaTo criteria);
 
   /**
    * Returns a paginated list of Bookings matching the search criteria.
