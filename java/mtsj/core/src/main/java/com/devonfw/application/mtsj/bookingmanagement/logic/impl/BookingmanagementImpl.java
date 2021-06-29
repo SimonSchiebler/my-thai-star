@@ -700,12 +700,15 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
     List<BookingCto> ctos = new ArrayList<>();
     for (BookingEntity entity : bookings.getContent()) {
       boolean shouldBeAdded = false;
+      if (entity.getOrders().size() == 0)
+        shouldBeAdded = true;
       for (OrderEntity order : entity.getOrders()) {
         if ((order.getPaidId() == 1 && order.getStateId() != 3)
             || (order.getPaidId() == 0 && order.getStateId() != 4)) {
           shouldBeAdded = true;
         }
       }
+
       if (shouldBeAdded) {
         BookingCto cto = new BookingCto();
         cto.setBooking(getBeanMapper().map(entity, BookingEto.class));
