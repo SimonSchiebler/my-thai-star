@@ -1,0 +1,284 @@
+---
+configuration:
+    userProfile:
+        name: James Tiberius Kirk
+        givenName: James
+        email: kirk@enterprise.org
+        mobileNumber:
+            countryCode: +1
+            phoneNumber: 123456789
+    address:
+        addressLine1: 215 Elm Street, NW
+        city: Washington
+        countryCode: US
+        postalCode: 20816
+        stateOrRegion: DC
+    locales: ../../skill-package/interactionModels/custom/en-US
+
+
+# launch skill
+
+---
+- test: Launch the my thai star skill
+- LaunchRequest: 
+  - prompt: "Welcome to My Thai Star."
+- open my thai star: 
+  - prompt: "Welcome to My Thai Star. "
+
+
+# reserve intent
+
+---
+- test: Reserve intent without order
+- ReserveIntent:
+    - sessionAttributes.date: undefined
+    - prompt: On what date do you want to reserve the table?
+- ReserveIntent date=2021-05-31:
+    - sessionAttributes.date: "2021-05-31"
+    - sessionAttributes.lastAction: "setTime"
+    - prompt: "On what time do you want to reserve the table?"
+- ReserveIntent time=10:00:
+    - sessionAttributes.time: "10:00"
+    - sessionAttributes.lastAction: "setAssistants"
+    - prompt: "With how many people are you going to come?"
+- ReserveIntent assistants=1:
+    - sessionAttributes.assistants: "1"
+    - sessionAttributes.lastAction: "setWantsToOrder"
+    - prompt: "Do you want to add an order to your reservation?"
+- ReserveIntent wantsToOrder=no:
+    - sessionAttributes.time: "10:00"
+    - sessionAttributes.assistants: "1"
+    - sessionAttributes.date: "2021-05-31"
+    - sessionAttributes.wantsToOrder: "no"
+    - sessionAttributes.lastAction: "setWantsToOrder"
+    - prompt: "Reserved Table for: kirk@enterprise.org for 2021-05-31 at 10:00"
+
+# OrderIntent
+
+---
+- test: OrderIntent 1 dish without confirmation
+- OrderIntent:
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.lastAction: "setDish"
+    - prompt: "What item do you want to add to your order?"
+- OrderIntent dish=beer:
+    - sessionAttributes.dish.name: "Beer"
+    - sessionAttributes.lastAction: "setAmount"
+    - prompt: "How many times would you like to order that item?"
+- OrderIntent amount=1:
+    - sessionAttributes.amount: undefined
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.orderlist[0].dish.name: "Beer"
+    - sessionAttributes.orderlist[0].amount: "1"
+    - sessionAttributes.lastAction: "setCompletedOrder"
+    - prompt: "Do you want to add another item from the Menu?"
+- OrderIntent completedOrder=no:
+    - sessionAttributes.oneMoreOrder: "no"
+    - prompt: "Do you want to hear your Order again?"
+- OrderIntent confirmation=no:
+    - prompt: "Your delivery has been placed. Thank you for ordering from us."
+
+---
+- test: OrderIntent 2 dish without confirmation
+- OrderIntent:
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.lastAction: "setDish"
+    - prompt: "What item do you want to add to your order?"
+- OrderIntent dish=beer:
+    - sessionAttributes.dish.name: "Beer"
+    - sessionAttributes.lastAction: "setAmount"
+    - prompt: "How many times would you like to order that item?"
+- OrderIntent amount=1:
+    - sessionAttributes.amount: undefined
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.orderlist[0].dish.name: "Beer"
+    - sessionAttributes.orderlist[0].amount: "1"
+    - sessionAttributes.lastAction: "setCompletedOrder"
+    - prompt: "Do you want to add another item from the Menu?"
+- OrderIntent completedOrder=yes:
+    - sessionAttributes.lastAction: "setDish"
+    - prompt: "What item do you want to add to your order?"
+- OrderIntent dish=salad:
+    - sessionAttributes.dish.name: "Garlic Paradise Salad"
+    - sessionAttributes.lastAction: "setAmount"
+    - prompt: "How many times would you like to order that item?"
+- OrderIntent amount=1:
+    - sessionAttributes.amount: undefined
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.orderlist[1].dish.name: "Garlic Paradise Salad"
+    - sessionAttributes.orderlist[1].amount: "1"
+    - sessionAttributes.lastAction: "setCompletedOrder"
+    - prompt: "Do you want to add another item from the Menu?"
+- OrderIntent completedOrder=no:
+    - sessionAttributes.oneMoreOrder: "no"
+    - prompt: "Do you want to hear your Order again?"
+- OrderIntent confirmation=no:
+    - prompt: "Your delivery has been placed. Thank you for ordering from us."
+
+---
+- test: OrderIntent 1 dish with confirmation
+- OrderIntent:
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.lastAction: "setDish"
+    - prompt: "What item do you want to add to your order?"
+- OrderIntent dish=beer:
+    - sessionAttributes.dish.name: "Beer"
+    - sessionAttributes.lastAction: "setAmount"
+    - prompt: "How many times would you like to order that item?"
+- OrderIntent amount=1:
+    - sessionAttributes.amount: undefined
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.orderlist[0].dish.name: "Beer"
+    - sessionAttributes.orderlist[0].amount: "1"
+    - sessionAttributes.lastAction: "setCompletedOrder"
+    - prompt: "Do you want to add another item from the Menu?"
+- OrderIntent completedOrder=no:
+    - sessionAttributes.oneMoreOrder: "no"
+    - prompt: "Do you want to hear your Order again?"
+- OrderIntent confirmation=yes:
+    - prompt: "Your Order is: 1 times the Beer. Is that correct?"
+- OrderIntent correct=yes:
+    - prompt: "Your delivery has been placed. Thank you for ordering from us."
+
+---
+- test: OrderIntent 1 dish with wrong confirmation
+- OrderIntent:
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.lastAction: "setDish"
+    - prompt: "What item do you want to add to your order?"
+- OrderIntent dish=beer:
+    - sessionAttributes.dish.name: "Beer"
+    - sessionAttributes.lastAction: "setAmount"
+    - prompt: "How many times would you like to order that item?"
+- OrderIntent amount=1:
+    - sessionAttributes.amount: undefined
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.orderlist[0].dish.name: "Beer"
+    - sessionAttributes.orderlist[0].amount: "1"
+    - sessionAttributes.lastAction: "setCompletedOrder"
+    - prompt: "Do you want to add another item from the Menu?"
+- OrderIntent completedOrder=no:
+    - sessionAttributes.oneMoreOrder: "no"
+    - prompt: "Do you want to hear your Order again?"
+- OrderIntent confirmation=yes:
+    - prompt: "Your Order is: 1 times the Beer. Is that correct?"
+- OrderIntent correct=no:
+    - prompt: "I'm Sorry to hear that. If you want to make a new Order please call the My Thai Star Skill again."
+
+---
+- test.skip: unknown dish
+- OrderIntent:
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.lastAction: "setDish"
+    - prompt: "What item do you want to add to your order?"
+- OrderIntent dish=wasser:
+    - sessionAttributes.lastAction: "setDish"
+    - prompt: "Sorry, i did not understand you, please order an item from the menu."
+
+# Add Order to a reservation
+
+---
+- test: Add order to a reservation
+- ReserveIntent:
+    - sessionAttributes.date: undefined
+    - prompt: On what date do you want to reserve the table?
+- ReserveIntent date=2021-05-31:
+    - sessionAttributes.date: "2021-05-31"
+    - sessionAttributes.lastAction: "setTime"
+    - prompt: "On what time do you want to reserve the table?"
+- ReserveIntent time=10:00:
+    - sessionAttributes.time: "10:00"
+    - sessionAttributes.lastAction: "setAssistants"
+    - prompt: "With how many people are you going to come?"
+- ReserveIntent assistants=1:
+    - sessionAttributes.assistants: "1"
+    - sessionAttributes.lastAction: "setWantsToOrder"
+    - prompt: "Do you want to add an order to your reservation?"
+- ReserveIntent wantsToOrder=yes:
+    - sessionAttributes.time: "10:00"
+    - sessionAttributes.assistants: "1"
+    - sessionAttributes.date: "2021-05-31"
+    - sessionAttributes.wantsToOrder: "yes"
+    - sessionAttributes.lastAction: "setDish"
+    - prompt: "What item do you want to add to your order?"
+- OrderIntent dish=beer:
+    - sessionAttributes.dish.name: "Beer"
+    - sessionAttributes.lastAction: "setAmount"
+    - prompt: "How many times would you like to order that item?"
+- OrderIntent amount=1:
+    - sessionAttributes.amount: undefined
+    - sessionAttributes.dish: undefined
+    - sessionAttributes.orderlist[0].dish.name: "Beer"
+    - sessionAttributes.orderlist[0].amount: "1"
+    - sessionAttributes.lastAction: "setCompletedOrder"
+    - prompt: "Do you want to add another item from the Menu?"
+- OrderIntent completedOrder=no:
+    - sessionAttributes.oneMoreOrder: "no"
+    - prompt: "Do you want to hear your Order again?"
+- OrderIntent confirmation=no:
+    - prompt: "Your Order has been placed. Thank you for your booking."
+
+# Address Intent
+
+---
+- test: Address Intent
+- AddressIntent: "The restaurants address is Place de l'Étoile - 11 rue de Tilsitt - 75017 Paris."
+
+# Bill Intent
+
+---
+- test: Bill Intent call from home
+- BillIntent:
+    - prompt: "Sorry but you can only ask for the bill when you are at the restaurant."
+
+# Waiter Intent
+
+---
+- test: Waiter Intent call from home
+- WaiterIntent:
+    - prompt: "Sorry but you can only call for a waiter when you are at the restaurant."
+
+# OrderState Intent
+
+---
+- test: Order State Intent
+- OrderStateIntent:
+    - prompt: "You currently have 1 open orders.
+    Your order is currently in the state: ordered. It was placed on: Wed Jun 30 2021 at 21:8"
+
+# Menu Intent
+
+---
+- test: Menu Intent with abort after first response
+- MenuIntent:
+    - prompt: "The current Items on the Menu are: Rice, Beer, Tea, do you want to hear more dishes?"
+- MenuIntent hearMore=no:
+    - prompt: "Hope you heared something you liked"
+
+---
+- test: Full Menu
+- MenuIntent:
+    - prompt: "The current Items on the Menu are: Rice, Beer, Tea, do you want to hear more dishes?"
+- MenuIntent hearMore=yes:
+    - prompt: "Rice, Beer, Tea, do you want to hear more dishes?"
+- MenuIntent hearMore=yes:
+    - prompt: "Rice, Thats everything that is on the menu."
+
+# Help Intent
+
+---
+- test: Help Intent at home
+- AMAZON.HelpIntent:
+    - prompt: "I currently have following commands: order food, reserve a table and whats the state of my order."
+
+# CancelAndStop Intent
+
+---
+- test: CancelIntent
+- AMAZON.CancelIntent:
+    - prompt: "Goodbye!"
+
+---
+- test: StopIntent
+- AMAZON.StopIntent:
+    - prompt: "Goodbye!"

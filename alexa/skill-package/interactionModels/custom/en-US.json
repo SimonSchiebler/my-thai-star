@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "my thai star at home",
+            "invocationName": "my thai star",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
@@ -68,14 +68,16 @@
                     "name": "MenuIntent",
                     "slots": [
                         {
-                            "name": "yesno",
+                            "name": "hearMore",
                             "type": "YesNo",
                             "samples": [
-                                "{yesno}"
+                                "{hearMore}"
                             ]
                         }
                     ],
                     "samples": [
+                        "what do you have to offer",
+                        "what is on the menu",
                         "menu"
                     ]
                 },
@@ -99,43 +101,76 @@
                         {
                             "name": "completedOrder",
                             "type": "YesNo"
+                        },
+                        {
+                            "name": "confirmation",
+                            "type": "YesNo"
+                        },
+                        {
+                            "name": "correct",
+                            "type": "YesNo"
                         }
                     ],
                     "samples": [
+                        "make an order",
+                        "order a dish",
                         "deliver food",
                         "deliver",
                         "order",
                         "order food"
                     ]
+                },
+                {
+                    "name": "OrderStateIntent",
+                    "slots": [],
+                    "samples": [
+                        "state",
+                        "whats the state of my order"
+                    ]
+                },
+                {
+                    "name": "AddressIntent",
+                    "slots": [],
+                    "samples": [
+                        "What's the address",
+                        "address"
+                    ]
+                },
+                {
+                    "name": "WaiterIntent",
+                    "slots": [],
+                    "samples": [
+                        "i need a waiter",
+                        "waiter"
+                    ]
+                },
+                {
+                    "name": "BillIntent",
+                    "slots": [],
+                    "samples": [
+                        "please bring me the bill",
+                        "bill"
+                    ]
                 }
             ],
             "types": [
-                {
-                    "name": "filter",
-                    "values": [
-                        {
-                            "name": {
-                                "value": "vegan"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "noodle"
-                            }
-                        }
-                    ]
-                },
                 {
                     "name": "YesNo",
                     "values": [
                         {
                             "name": {
-                                "value": "No"
+                                "value": "no",
+                                "synonyms": [
+                                    "No"
+                                ]
                             }
                         },
                         {
                             "name": {
-                                "value": "Yes"
+                                "value": "yes",
+                                "synonyms": [
+                                    "Yes"
+                                ]
                             }
                         }
                     ]
@@ -261,7 +296,7 @@
                     "prompts": {},
                     "slots": [
                         {
-                            "name": "yesno",
+                            "name": "hearMore",
                             "type": "YesNo",
                             "confirmationRequired": false,
                             "elicitationRequired": true,
@@ -286,7 +321,7 @@
                             "validations": [
                                 {
                                     "type": "hasEntityResolutionMatch",
-                                    "prompt": "Slot.Validation.47655686711.467069269950.1524378880796"
+                                    "prompt": "Slot.Validation.71543549094.343140239803.1237557962209"
                                 }
                             ]
                         },
@@ -299,6 +334,20 @@
                         },
                         {
                             "name": "completedOrder",
+                            "type": "YesNo",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        },
+                        {
+                            "name": "confirmation",
+                            "type": "YesNo",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        },
+                        {
+                            "name": "correct",
                             "type": "YesNo",
                             "confirmationRequired": false,
                             "elicitationRequired": false,
@@ -392,20 +441,47 @@
                 ]
             },
             {
-                "id": "Slot.Validation.47655686711.467069269950.1524378880796",
-                "variations": [
-                    {
-                        "type": "PlainText",
-                        "value": "Please order something that's on the menu."
-                    }
-                ]
-            },
-            {
                 "id": "Slot.Validation.698210688078.1609394377601.128375739531",
                 "variations": [
                     {
                         "type": "PlainText",
                         "value": "Pls refer to a date that is in the future."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.71543549094.343140239803.1237557962209",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Pls order an item that is on the menu"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1096194803427.611185665391",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What item do you want to add to your order?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.213156577428.515071896051",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "how many times do you want to order this item"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1310585915769.297102055784",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "do you want to add another dish?"
                     }
                 ]
             }
