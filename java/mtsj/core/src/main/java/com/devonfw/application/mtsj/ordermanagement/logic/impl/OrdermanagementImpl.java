@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -209,14 +210,24 @@ public class OrdermanagementImpl extends AbstractComponentFacade implements Orde
 		Page<OrderCto> pagListTo = null;
 		List<OrderEntity> orders;
 
-		if (criteria.isArchive()) {
-			orders = getOrderDao().findUnActiveOrders();
-		} else if (criteria.isOrder_cockpit()) {
-			orders = getOrderDao().findActiveOrders();
-		} else {
-			orders = getOrderDao().findAllOrders();
-		}
-		
+    if (criteria.isArchive()) {
+      orders = getOrderDao().findUnActiveOrders();
+      orders = orders.stream()
+          .filter(p -> (criteria.getEmail() == null || p.getBooking().getEmail().contains(criteria.getEmail()))
+              && (criteria.getBookingToken() == null
+                  || p.getBooking().getBookingToken().contains(criteria.getBookingToken())))
+          .collect(Collectors.toList());
+    } else if (criteria.isOrder_cockpit()) {
+      orders = getOrderDao().findActiveOrders();
+      orders = orders.stream()
+          .filter(p -> (criteria.getEmail() == null || p.getBooking().getEmail().contains(criteria.getEmail()))
+              && (criteria.getBookingToken() == null
+                  || p.getBooking().getBookingToken().contains(criteria.getBookingToken())))
+          .collect(Collectors.toList());
+    } else {
+      orders = getOrderDao().findAllOrders();
+    }
+
 		int total = orders.size();
 		int pageNumber = criteria.getPageable().getPageNumber();
 		int pageSize = criteria.getPageable().getPageSize();
@@ -224,12 +235,12 @@ public class OrdermanagementImpl extends AbstractComponentFacade implements Orde
 		int to = pageSize*(pageNumber+1);
 		if(to > total)
 			to = total;
-		
-		List<OrderEntity> subList = orders.subList(from, to);	
+
+		List<OrderEntity> subList = orders.subList(from, to);
 		for (OrderEntity order : subList) {
 			processOrders(ctos, order);
 		}
-		
+
 		if (ctos.size() > 0) {
 			Pageable pagResultTo = PageRequest.of(pageNumber, pageSize);
 			pagListTo = new PageImpl<>(ctos, pagResultTo, orders.size());
