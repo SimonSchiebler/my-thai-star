@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -708,9 +710,13 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
   public Page<BookingCto> findActiveBookings(BookingSearchCriteriaTo criteria) {
 
     Page<BookingCto> pagListTo = null;
+    Pageable pageable = criteria.getPageable();
+    criteria.setPageable(PageRequest.of(0,9999));
     Page<BookingEntity> bookings = getBookingDao().findBookings(criteria);
+    criteria.setPageable(pageable);
     List<BookingCto> ctos = new ArrayList<>();
     for (BookingEntity entity : bookings.getContent()) {
+
       boolean shouldBeAdded = false;
       if (entity.getOrders().size() == 0)
         shouldBeAdded = true;
@@ -729,12 +735,23 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
         cto.setTable(getBeanMapper().map(entity.getTable(), TableEto.class));
         cto.setUser(getBeanMapper().map(entity.getUser(), UserEto.class));
         cto.setOrders(getBeanMapper().mapList(entity.getOrders(), OrderEto.class));
-        ctos.add(cto);
+        ctos.add(cto);  	
       }
     }
+    
+	int total = ctos.size();
+	int pageNumber = criteria.getPageable().getPageNumber();
+	int pageSize = criteria.getPageable().getPageSize();
+	int from = pageSize*pageNumber;
+	int to = pageSize*(pageNumber+1);
+	if(to > total)
+		to = total;
+	List<BookingCto> subList = ctos.subList(from, to);
+	
+	
     if (ctos.size() > 0) {
-      Pageable pagResultTo = PageRequest.of(criteria.getPageable().getPageNumber(), ctos.size());
-      pagListTo = new PageImpl<>(ctos, pagResultTo, ctos.size());
+      Pageable pagResultTo = PageRequest.of(pageNumber, pageSize);
+      pagListTo = new PageImpl<>(subList, pagResultTo, total);
     }
     return pagListTo;
   }
