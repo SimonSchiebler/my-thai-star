@@ -734,7 +734,7 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
     }
     if (ctos.size() > 0) {
       Pageable pagResultTo = PageRequest.of(criteria.getPageable().getPageNumber(), ctos.size());
-      pagListTo = new PageImpl<>(ctos, pagResultTo, bookings.getTotalElements());
+      pagListTo = new PageImpl<>(ctos, pagResultTo, ctos.size());
     }
     return pagListTo;
   }
