@@ -17,6 +17,7 @@ import com.devonfw.mts.pages.ThaiConfirmBookPage;
 import com.devonfw.mts.pages.ThaiHomePage;
 import com.devonfw.mts.pages.ThaiLoginPage;
 import com.devonfw.mts.pages.ThaiMenuPage;
+import com.devonfw.mts.pages.ThaiOrdersPage;
 import com.devonfw.mts.pages.ThaiReservationsPage;
 import com.devonfw.mts.pages.ThaiSummaryPage;
 import com.devonfw.mts.pages.ThaiWaiterPage;
@@ -100,13 +101,15 @@ public class MyThaiStarTest extends BaseTest {
    * Order a menu
    */
   @Test
-  public void Test_orderMenu() {
+  @FileParameters(value = "src/test/resources/datadriven/test_waiters.csv", mapper = UserMapper.class)
+  public void Test_orderMenu(User user) {
 
-    String bookingId = "CB_20170510_123502655Z";
+    String bookingId = "CB_20210514_e86c75bced5da70726fe4588c23ea212";
     ThaiMenuPage menuPage = this.myThaiStarHome.clickMenuButton();
     ThaiSummaryPage summaryPage = menuPage.clickFirstMenu();
     summaryPage.orderMenu(bookingId);
-
+    login(user);
+    verifyOrderExists(bookingId);
     // TODO implement oder verification
   }
 
@@ -146,6 +149,15 @@ public class MyThaiStarTest extends BaseTest {
     Assert.assertTrue("Booking not found", reservations.containsKey(reservation.getDate()));
     List<Reservation> reservationsForDate = reservations.get(reservation.getDate());
     Assert.assertFalse("Booking not found", reservationsForDate.isEmpty());
+  }
+
+  /** Verify that the booking was successfully completed */
+  private void verifyOrderExists(String reservationToken) {
+
+    ThaiOrdersPage myOrdersPage = new ThaiOrdersPage();
+    myOrdersPage.setFilters(null, reservationToken);
+    Assert.assertTrue(myOrdersPage.isOnlyOneOrderDisplayed());
+
   }
 
 }
