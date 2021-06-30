@@ -6,30 +6,30 @@ module.exports.messages = {
     ReserveIntentHandler: {
       buildReservedTableAwnser: (email, date, time) =>
         `Es wurde ein Tisch reserviert für: ${email} am ${date} um ${time} Uhr.`,
-      askForDate: "An welchem Tag möchtests du den Tisch reservieren?",
-      askForTime: "Um wie viel Uhr möchtest du den Tisch reservieren?",
+      askForDate: "An welchem Tag möchten Sie den Tisch reservieren?",
+      askForTime: "Um wie viel Uhr möchten Sie den Tisch reservieren",
       askForNumberOfPeople: "Wie viele Personen werden da sein?",
-      addAnOrderQuestion: "Möchtest du deiner Reservierung eine Bestellung hinzufügen.",
-      askForItem: "Welches Gericht möchtes du hinzufügen?",
-      homeRestriction: "Entschuldigung aber Sie können einen Tisch nur reservieren wenn Sie von Zuhause den Skill starten.",
+      addAnOrderQuestion: "Möchten Sie der Reservierung eine Bestellung hinzufügen?",
+      askForItem: "Welches Gericht möchten Sie Ihrer Bestellung hinzufügen?",
+      homeRestriction: "Entschuldigung, aber Sie können nur dann einen Tisch reservieren wenn Sie den Skill von Zuhause nutzen.",
     },
     OrderIntentHandler: {
       didNotUnderstandDish:
-        "Entschuldigung, ich habe das nicht verstanden. Bitte bestelle ein Gericht das auf der Karte steht.",
-      askForItem: "Welches Gericht möchtes du hinzufügen?",
-      askForItemCount: "Wie oft möchtest du das Gericht hinzufügen?",
-      askOneMore: "Möchtest du ein weiteres Gericht der Karte hinzufügen?",
-      askRepeatOrder: "Soll ich deine Bestellung wiederholen?",
+        "Entschuldigung, ich habe das nicht verstanden. Bitte bestellen Sie ein Gericht von der Karte.",
+      askForItem: "Welches Gericht möchten Sie Ihrer Bestellung hinzufügen?",
+      askForItemCount: "Wie oft möchten Sie das Gericht der Bestellung hinzufügen?",
+      askOneMore: "Möchten Sie ein weiteres Gericht von der Karte Ihrer Bestellung hinzufügen?",
+      askRepeatOrder: "Soll ich Ihre Bestellung nochmal aufzählen?",
       deliveryConfirmation:
-        "Deine Bestellung wurde aufgegeben. Danke, dass du bei uns bestellt hast.",
+        "Ihre Bestellung wurde aufgegeben. Vielen Dank, dass Sie bei uns bestellt haben.",
       orderConfirmation:
-        "Deine Reservierung wurde getätigt. Wir erwarten dich.",
+        "Ihre Reservierung wurde getätigt. Wir freuen uns auf Ihren Besuch.",
       orderInhouseConfirmation:
-        "Deine Bestellung wurde erfasst. Ein Kellner sollte bald mit dem Essen bei Ihnen sein.",
+        "Ihre Bestellung wurde erfasst. Ein Kellner sollte bald mit dem Essen bei Ihnen seien.",
       orderNotConfirmed:
-        "Das ist schade. Wenn du eine Bestellung aufgeben möchtests rufe bitte nocheinmal den My Thai Star Skill auf.",
+        "Das ist Schade. Wenn Sie eine Bestellung aufgeben möchten rufen Sie den Skill nochmal auf.",
       buildCurrentOrderContents: (orders) => {
-        var speakOutput = "Deine Bestellung ist: ";
+        var speakOutput = "Ihre Bestellung ist: ";
         speakOutput += orders
           .map((orders) => `${orders.amount} mal das ${orders.dish.name}. `)
           .join("");
@@ -39,8 +39,9 @@ module.exports.messages = {
     OrderStateHandler: {
       buildOpenOrders: (orders) => {
         let res =
-          "Du hast derzeit " + orders.length + " offene Bestellungen. \n";
+          "Sie haben derzeit " + orders.length + " offene Bestellungen. \n";
         const states = ["bestellt", "Zubereitung", "Auslieferung"];
+        var i = 1;
         for (const order of orders) {
           state = states[order.orders[0].stateId];
           var t = new Date(1970, 0, 1);
@@ -49,10 +50,11 @@ module.exports.messages = {
             t.toDateString() + " um " + t.getHours() + ":" + t.getMinutes();
           res +=
             orders.length == 1
-              ? `Deine Bestellung befindet sich derzeit im Status: ${state}. Sie wurde am: ${date} aufgegeben.`
-              : `Deine ${
-                  i + 1
-                }th Bestellung befindet sich derueit im Status: ${state}. Sei wurde am: ${date} aufgegeben.`;
+              ? `Ihre Bestellung befindet sich derzeit im Status: ${state}. Sie wurde am: ${date} aufgegeben. `
+              : `Ihre ${
+                  i
+                }te Bestellung befindet sich derzeit im Status: ${state}. Sie wurde am: ${date} aufgegeben. `;
+          i++;
         }
         return res;
       },
@@ -75,10 +77,10 @@ module.exports.messages = {
     },
     MenuIntentHandler: {
       whatIsOnTheMenu: "Auf unserer Karte sind derzeit: ",
-      askMoreDishes: "Möchtest du noch weitere Gerichte von der Karte hören?",
+      askMoreDishes: "Möchten Sie noch weitere Gerichte von der Karte hören?",
       noMoreDishes: "Es gibt keine weiteren Gerichte auf der Karte.",
       endOfMenu: "Das ist alles was auf der Karte steht.",
-      endingPhrase: "Ich hoffe es war etwas nach deinem Geschmack dabei.",
+      endingPhrase: "Ich hoffe es war etwas nach Ihrem Geschmack dabei.",
     },
     HelpIntentHandler: {
         helpMessageHome: "Ich kann folgende Befehle ausführen: Menü, Bestellen, Reservieren, Bestellstatus und Addresse.",
