@@ -147,13 +147,8 @@ export class ReservationCockpitComponent implements OnInit, OnDestroy {
     this.waiterCockpitService
       .changeTableNumber(element.booking)
       .subscribe((data) => {
-        this.waiterCockpitService
-          .getOrders(this.pageable, this.sorting, this.filters)
-          .subscribe((data: any) => {
-            this.reservations = data.content;
-            this.totalReservations = data.totalElements;
-            this.table.renderRows();
-          });
+          this.applyFilters();
+          this.table.renderRows();
       }); 
   }
 

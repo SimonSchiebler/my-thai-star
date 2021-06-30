@@ -19,6 +19,12 @@
     }
   }
 
+  #container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .formMobileRow {
     flex: 1;
     align-items: center;
@@ -61,7 +67,6 @@
   ::ng-deep .mat-sort-header-container {
     display:flex;
     justify-content:center;
-
   }
   
   @media (max-width: 599px) {

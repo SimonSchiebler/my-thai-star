@@ -177,7 +177,7 @@
     name="order"
     mat-icon-button
     (click)="openCloseSideNav(sidenav.opened)"
-    [matTooltip]="'main.userActions.orders' | transloco"
+    [matTooltip]="'main.orders' | transloco"
   >
     <mat-icon
       [matBadge]="sidenav.getNumberOrders() | async"
@@ -191,7 +191,6 @@
     mat-icon-button
     [matMenuTriggerFor]="menu"
     matTooltip="{{ currentLang | uppercase }}"
-    matTooltipHideDelay="1000"
   >
     <span class="flag-icon flag-icon-{{ flag }}"></span>
   </button>
@@ -199,9 +198,9 @@
   <button
     name="aboutUs"
     mat-icon-button
-    matTooltipHideDelay="1000"
     (click)="openAboutYouDialog()"
     matBadgeColor="accent"
+    [matTooltip]="'aboutYou.title' | transloco"
   >
     <mat-icon>help_outline</mat-icon>
   </button>

@@ -80,6 +80,16 @@ public interface BookingmanagementRestService {
   public Page<BookingCto> findBookingsByPost(BookingSearchCriteriaTo searchCriteriaTo);
 
   /**
+   * Delegates to {@link Bookingmanagement#findBookingEtos}.
+   *
+   * @param searchCriteriaTo the pagination and search criteria to be used for finding bookings.
+   * @return the {@link PaginatedListTo list} of matching {@link BookingEto}s.
+   */
+  @Path("/booking/searchActive")
+  @POST
+  public Page<BookingCto> findActiveBookings(BookingSearchCriteriaTo criteria);
+
+  /**
    * Delegates to {@link Bookingmanagement#findInvitedGuest}.
    *
    * @param id the ID of the {@link InvitedGuestEto}

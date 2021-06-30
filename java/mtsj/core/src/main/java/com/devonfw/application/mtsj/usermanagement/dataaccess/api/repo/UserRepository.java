@@ -42,7 +42,8 @@ public interface UserRepository extends DefaultRepository<UserEntity> {
       query.where(Alias.$(alias.getUserRole().getId()).eq(userRole));
     }
 
-    return QueryUtil.get().findPaginated(criteria.getPageable(), query, false);
+    return QueryUtil.get().findPaginated(criteria.getPageable(), query, true);
+
   }
 
   /**

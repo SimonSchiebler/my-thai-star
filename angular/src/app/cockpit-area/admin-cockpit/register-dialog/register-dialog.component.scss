@@ -13,6 +13,18 @@ mat-tab-group {
   .formFields {
     margin-bottom: 8px;
   }
+
+  .mat-dialog-content {
+    display: inline;
+    width: 100%;
+    overflow: auto;
+  }
+
+  h3{
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+  }
   
   @media (max-width: 599px) {
     .forgotPassword {
