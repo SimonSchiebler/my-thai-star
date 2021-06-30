@@ -1,7 +1,8 @@
 module.exports.messages = {
   LaunchRequestHandler: {
     spechoutput:
-      "Welcome to My Thai Star",
+      "Welcome to My Thai Star. ",
+
   },
   ReserveIntentHandler: {
     buildReservedTableAwnser: (email, date, time) =>
@@ -15,9 +16,9 @@ module.exports.messages = {
   },
   OrderIntentHandler: {
     didNotUnderstandDish:
-      "Sorry, i did not understand you, please order an item from the menu",
+      "Sorry, i did not understand you, please order an item from the menu.",
     askForItem: "What item do you want to add to your order?",
-    askForItemCount: "How many times would you like to order that item",
+    askForItemCount: "How many times would you like to order that item?",
     askOneMore: "Do you want to add another item from the Menu?",
     askRepeatOrder: "Do you want to hear your Order again?",
     deliveryConfirmation:
@@ -39,7 +40,7 @@ module.exports.messages = {
   OrderStateHandler: {
     buildOpenOrders: (orders) => {
       let res =
-        "you currently have " + orders.length + " open orders. \n";
+        "You currently have " + orders.length + " open orders. ";
       const states = ["ordered", "preperation", "delivery"];
       for (const order of orders) {
         state = states[order.orders[0].stateId];
@@ -66,12 +67,12 @@ module.exports.messages = {
   WaiterIntentHandler: {
     waiterWasCalled:
       "The waiter for your table was informed that you need help.",
-    inhouseRestriciton: "Sorry but you can only call for a waiter when you are at the restaurant.",
+    inhouseRestriction: "Sorry but you can only call for a waiter when you are at the restaurant.",
   },
   BillIntentHandler: {
     billRequested:
       "The waiter for your table was informed that you want to pay and need the bill.",
-      inhouseRestriciton: "Sorry but you can only ask for the bill when you are at the restaurant.",
+    inhouseRestriction: "Sorry but you can only ask for the bill when you are at the restaurant.",
   },
   MenuIntentHandler: {
     whatIsOnTheMenu: "The current Items on the Menu are: ",

@@ -1,0 +1,53 @@
+---
+configuration:
+  locales: ../../skill-package/interactionModels/custom/en-US
+  dynamo: mock
+  deviceId: testId
+---
+# Reserve Intent
+
+---
+- test: Reserve intent called from restaurant
+- LaunchRequest:
+  - sessionAttributes.tableId: "1"
+- ReserveIntent: "Sorry but you can only reserve a table when you use the Skill at home."
+
+# Address Intent
+
+---
+- test: Address Intent called from restaurant
+- LaunchRequest:
+  - sessionAttributes.tableId: "1"
+- AddressIntent: "Sorry but you can only ask for the address when you use the Skill at home."
+
+# OrderState Intent
+
+---
+- test: OrderState Intent called from restaurant
+- LaunchRequest:
+  - sessionAttributes.tableId: "1"
+- OrderStateIntent: "Sorry but you can only ask for the order state when you use the Skill at home."
+
+# Help Intent
+
+---
+- test: HelpIntent called from restaurant
+- LaunchRequest:
+- AMAZON.HelpIntent:
+  - prompt: "I currently have following commands: order, menu, bill and waiter."
+
+# Bill Intent
+
+---
+- test: BillIntent called from restaurant
+- LaunchRequest:
+- BillIntent:
+  - prompt: "The waiter for your table was informed that you want to pay and need the bill."
+
+# Waiter Intent
+
+---
+- test: WaiterIntent called from restaurant
+- LaunchRequest:
+- WaiterIntent:
+  - prompt: "The waiter for your table was informed that you need help."

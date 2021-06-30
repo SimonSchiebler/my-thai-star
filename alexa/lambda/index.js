@@ -255,47 +255,7 @@ const OrderIntentHandler = {
           .addElicitSlotDirective("completedOrder")
           .speak(messages.askOneMore)
           .getResponse();
-      } else if (amount && dish && oneMoreOrder === "no") {
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("confirmation")
-          .speak(messages.askRepeatOrder)
-          .getResponse();
-      }
-      if (!dish && (oneMoreOrder === "yes" || oneMoreOrder === undefined)) {
-        sessionAttributes.lastAction = "setDish";
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("dish")
-          .speak(messages.askForItem)
-          .getResponse();
-      } else if (
-        !amount &&
-        (oneMoreOrder === "yes" || oneMoreOrder === undefined)
-      ) {
-        sessionAttributes.lastAction = "setAmount";
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("amount")
-          .speak(messages.askForItemCount)
-          .getResponse();
-      } else if (
-        amount &&
-        dish &&
-        (oneMoreOrder === "yes" || oneMoreOrder === undefined)
-      ) {
-        sessionAttributes.lastAction = "setCompletedOrder";
-
-        sessionAttributes.orderlist.push({ dish, amount });
-
-        delete sessionAttributes.amount;
-        delete sessionAttributes.dish;
-        delete sessionAttributes.completedOrder;
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        return handlerInput.responseBuilder
-          .addElicitSlotDirective("completedOrder")
-          .speak(messages.askOneMore)
-          .getResponse();
-      } else if (oneMoreOrder === "no") {
+      }  else if (oneMoreOrder === "no") {
         return handlerInput.responseBuilder
           .addElicitSlotDirective("confirmation")
           .speak(messages.askRepeatOrder)
