@@ -2,6 +2,7 @@ module.exports.messages = {
   LaunchRequestHandler: {
     spechoutput:
       "Welcome to My Thai Star. ",
+
   },
   ReserveIntentHandler: {
     buildReservedTableAwnser: (email, date, time) =>

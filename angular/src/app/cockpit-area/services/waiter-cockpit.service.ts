@@ -23,7 +23,7 @@ import { PriceCalculatorService } from '../../sidenav/services/price-calculator.
 @Injectable()
 export class WaiterCockpitService {
   private readonly getReservationsRestPath: string =
-    'bookingmanagement/v1/booking/search';
+    'bookingmanagement/v1/booking/searchActive';
   private readonly updateTableNumber: string =
     'bookingmanagement/v1/booking/updateTable';
   private readonly getOrdersRestPath: string =

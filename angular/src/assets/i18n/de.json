@@ -1,5 +1,6 @@
 {
   "buttons": {
+    "add":"Hinzufügen",
     "cancel": "Abbrechen",
     "apply": "Bestätigen",
     "close": "Schließen",
@@ -13,8 +14,7 @@
     "clearFilters": "Filter zurücksetzen",
     "applyFilters": "Filter anwenden",
     "removeComment": "Kommentar entfernen",
-    "addComment": "Kommentar hinzufügen",
-    "addUser": "Nutzer hinzufügen"
+    "addComment": "Kommentar hinzufügen"
   },
   "table": {
     "rowsPage": "Zeilen pro Seite",
@@ -40,6 +40,8 @@
     "orderID": "Zum Bestellen ist eine Buchungs-ID notwendig. Gib entweder eine bereits bestehende Buchungs-ID ein oder buch einen Tisch.",
     "passwordError": "Das Passwort muss aus mindestens 6 Zeichen bestehen",
     "confirmPassword":"Die Passwörter stimmen nicht überein",
+    "nameError":"Einen einzigartigen Nutzernamen eintragen",
+    "emailError": "Die Email-Adresse ist nicht korrekt",
     "authAlerts": {
       "loginSuccess": "Anmeldung erfolgreich",
       "registerSuccess": "Registrierung erfolgreich",
@@ -101,17 +103,6 @@
     "reservations": "Reservierungen",
     "admin": "Benutzer",
     "devices": "Geräte",
-    "aboutYou":{
-      "opening": "Öffnungszeiten",
-      "title": "Über uns",
-      "monday": "Montag",
-      "tuesday": "Dienstag",
-      "wednesday": "Mittwoch",
-      "thursday": "Donnerstag",
-      "friday": "Freitag",
-      "saturday": "Samstag",
-      "location": "Unser Standort"
-    },
     "userActions": {
       "user": "Benutzer",
       "pairing": "Zwei-Faktor-Authentifizierung einstellen",
@@ -201,7 +192,8 @@
           "usernameH": "Name",
           "idH": "Id",
           "userRoleIdH": "Rolle",
-          "deleteButtonH": "Löschen"
+          "deleteButtonH": "Löschen",
+          "addUser": "Nutzer re­gis­t­rie­ren"
       },
       "successBarCreated": {
         "stringpart1": "Der Nutzer ",

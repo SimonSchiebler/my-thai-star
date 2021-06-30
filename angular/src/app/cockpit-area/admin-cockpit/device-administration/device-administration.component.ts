@@ -28,6 +28,7 @@ export class DeviceAdministrationComponent implements OnInit {
   ngOnInit(): void {
     this.adminService.getTables().subscribe((tables) => {
       this.tables = tables.content;
+      this.tables.shift(); //table 0 => delivery
     });
   }
 }
