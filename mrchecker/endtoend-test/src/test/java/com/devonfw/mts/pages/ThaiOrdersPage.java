@@ -3,6 +3,7 @@ package com.devonfw.mts.pages;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -79,11 +80,15 @@ public class ThaiOrdersPage extends BasePage {
 
   public boolean isOnlyOneOrderDisplayed() {
 
-    for (int i = 0; i <= 9; i++) {
+    for (int i = 0; i <= 29; i++) {
       List<WebElement> asd = getDriver().findElements(tableRowsSearch);
       if (asd.size() == 1)
         return true;
-      new WebDriverWait(getDriver(), 1);
+      try {
+        new WebDriverWait(getDriver(), 1).until(driver -> driver.findElements(tableRowsSearch).size() == 1);
+      } catch (TimeoutException e) {
+        getDriver().findElementDynamic(applyFiltersButtonSearch).click();
+      }
     }
     return false;
   }
