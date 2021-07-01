@@ -94,7 +94,7 @@ export class OrderCockpitComponent implements OnInit, OnDestroy {
         .map((x, i) => i);
     });
 
-    this.intervalService.setInterval(60000,() => this.waiterCockpitService.getOrders(this.pageable, this.sorting, this.filters).subscribe((data: any) => {
+    this.intervalService.setInterval(5000,() => this.waiterCockpitService.getOrders(this.pageable, this.sorting, this.filters).subscribe((data: any) => {
       this.orders = data.content;  
       this.totalOrders = data.totalElements;
     }));
