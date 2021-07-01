@@ -9,7 +9,12 @@
                 },
                 {
                     "name": "AMAZON.HelpIntent",
-                    "samples": []
+                    "samples": [
+                        "helf mir",
+                        "was kann ich machen",
+                        "hillf",
+                        "hilfe"
+                    ]
                 },
                 {
                     "name": "AMAZON.StopIntent",
@@ -35,6 +40,7 @@
                         }
                     ],
                     "samples": [
+                        "les mir das menü vor",
                         "Was habt ihr anzubieten",
                         "Vorschlag",
                         "Vorschläge",
@@ -56,11 +62,21 @@
                         },
                         {
                             "name": "time",
-                            "type": "AMAZON.TIME"
+                            "type": "AMAZON.TIME",
+                            "samples": [
+                                "{time} Uhr",
+                                "{time}",
+                                "um {time} Uhr"
+                            ]
                         },
                         {
                             "name": "assistants",
-                            "type": "AMAZON.NUMBER"
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "{assistants} Leute",
+                                "{assistants} Personen",
+                                "{assistants}"
+                            ]
                         },
                         {
                             "name": "wantsToOrder",
@@ -91,12 +107,16 @@
                             "name": "amount",
                             "type": "AMAZON.FOUR_DIGIT_NUMBER",
                             "samples": [
+                                "{amount} mal",
                                 "{amount}"
                             ]
                         },
                         {
                             "name": "completedOrder",
-                            "type": "YesNo"
+                            "type": "YesNo",
+                            "samples": [
+                                "{completedOrder}"
+                            ]
                         },
                         {
                             "name": "confirmation",
@@ -118,7 +138,7 @@
                     "name": "AddressIntent",
                     "slots": [],
                     "samples": [
-                        "Wie sind die Anfahrtsdaten für das Restaurant",
+                        "Wie sind die Anfahrtsdaten des Restaurants",
                         "Wie ist die Addresse vom Restaurant",
                         "Addresse"
                     ]
@@ -193,6 +213,7 @@
                             "name": {
                                 "value": "Thai Peanut Beef",
                                 "synonyms": [
+                                    "Gebratene Nudeln mit Rind",
                                     "Erdnuss Rind",
                                     "Rind"
                                 ]
@@ -247,6 +268,7 @@
                             "name": {
                                 "value": "yes",
                                 "synonyms": [
+                                    "weiter",
                                     "Ja"
                                 ]
                             }
@@ -284,15 +306,19 @@
                             "name": "time",
                             "type": "AMAZON.TIME",
                             "confirmationRequired": false,
-                            "elicitationRequired": false,
-                            "prompts": {}
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.881743126354.868873511613"
+                            }
                         },
                         {
                             "name": "assistants",
                             "type": "AMAZON.NUMBER",
                             "confirmationRequired": false,
-                            "elicitationRequired": false,
-                            "prompts": {}
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.110346586865.1208300286840"
+                            }
                         },
                         {
                             "name": "wantsToOrder",
@@ -337,8 +363,10 @@
                             "name": "completedOrder",
                             "type": "YesNo",
                             "confirmationRequired": false,
-                            "elicitationRequired": false,
-                            "prompts": {}
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1577179732694.1101013411709"
+                            }
                         },
                         {
                             "name": "confirmation",
@@ -428,6 +456,42 @@
                     {
                         "type": "PlainText",
                         "value": "Möchtest du mehr Gerichte hören?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.110346586865.1208300286840",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "mit wie vielen leuten wirst du kommen"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1175781952022.1099285513332",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "möchtest du ein weiteres gericht der karte hinzufügen"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1577179732694.1101013411709",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Möchten sie noch ein Gericht hinzufügen"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.881743126354.868873511613",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Um wie viel Uhr möchten Sie den Tisch reservieren"
                     }
                 ]
             }
