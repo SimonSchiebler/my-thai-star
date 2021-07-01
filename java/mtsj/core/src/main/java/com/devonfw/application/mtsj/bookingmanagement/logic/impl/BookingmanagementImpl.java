@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -219,6 +221,16 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
   public BookingEto saveBooking(BookingCto booking) {
 
     Objects.requireNonNull(booking, "booking");
+    
+	if(booking.getBooking().getDelivery() == null) {
+		if(booking.getBooking().getOrderId() != null && getOrderDao().find(booking.getBooking().getOrderId()).getAddress() != null) {
+			booking.getBooking().setDelivery(true);
+		} else {
+			booking.getBooking().setDelivery(false);
+			booking.getBooking().setTableId(0L);
+		}
+	}
+    
     BookingEntity bookingEntity = getBeanMapper().map(booking.getBooking(), BookingEntity.class);
 
     bookingEntity.setCanceled(false);
@@ -226,13 +238,15 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
 
     List<InvitedGuestEntity> invited = getBeanMapper().mapList(booking.getInvitedGuests(), InvitedGuestEntity.class);
 
-	if(booking.getBooking().getDelivery() == null) {		
-		if(getOrderDao().find(booking.getBooking().getOrderId()).getAddress() != null) {
-			booking.getBooking().setDelivery(true);
-		} else {
-			booking.getBooking().setDelivery(false);
-		}
-	}
+
+    if (booking.getBooking().getDelivery() == null) {
+      if (getOrderDao().find(booking.getBooking().getOrderId()).getAddress() != null) {
+        booking.getBooking().setDelivery(true);
+      } else {
+        booking.getBooking().setDelivery(false);
+      }
+    }
+
 
     for (InvitedGuestEntity invite : invited) {
       try {
@@ -690,5 +704,55 @@ public class BookingmanagementImpl extends AbstractComponentFacade implements Bo
     }
 
     return getBeanMapper().map(resultBookingEntity, BookingEto.class);
+  }
+
+  @Override
+  public Page<BookingCto> findActiveBookings(BookingSearchCriteriaTo criteria) {
+
+    Page<BookingCto> pagListTo = null;
+    Pageable pageable = criteria.getPageable();
+    criteria.setPageable(PageRequest.of(0,9999));
+    Page<BookingEntity> bookings = getBookingDao().findBookings(criteria);
+    criteria.setPageable(pageable);
+    List<BookingCto> ctos = new ArrayList<>();
+    for (BookingEntity entity : bookings.getContent()) {
+
+      boolean shouldBeAdded = false;
+      if (entity.getOrders().size() == 0)
+        shouldBeAdded = true;
+      for (OrderEntity order : entity.getOrders()) {
+        if ((order.getPaidId() == 1 && order.getStateId() != 3)
+            || (order.getPaidId() == 0 && order.getStateId() != 4)) {
+          shouldBeAdded = true;
+        }
+      }
+
+      if (shouldBeAdded) {
+        BookingCto cto = new BookingCto();
+        cto.setBooking(getBeanMapper().map(entity, BookingEto.class));
+        cto.setInvitedGuests(getBeanMapper().mapList(entity.getInvitedGuests(), InvitedGuestEto.class));
+        cto.setOrder(getBeanMapper().map(entity.getOrder(), OrderEto.class));
+        cto.setTable(getBeanMapper().map(entity.getTable(), TableEto.class));
+        cto.setUser(getBeanMapper().map(entity.getUser(), UserEto.class));
+        cto.setOrders(getBeanMapper().mapList(entity.getOrders(), OrderEto.class));
+        ctos.add(cto);  	
+      }
+    }
+    
+	int total = ctos.size();
+	int pageNumber = criteria.getPageable().getPageNumber();
+	int pageSize = criteria.getPageable().getPageSize();
+	int from = pageSize*pageNumber;
+	int to = pageSize*(pageNumber+1);
+	if(to > total)
+		to = total;
+	List<BookingCto> subList = ctos.subList(from, to);
+	
+	
+    if (ctos.size() > 0) {
+      Pageable pagResultTo = PageRequest.of(pageNumber, pageSize);
+      pagListTo = new PageImpl<>(subList, pagResultTo, total);
+    }
+    return pagListTo;
   }
 }

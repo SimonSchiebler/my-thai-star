@@ -5,16 +5,16 @@
 
 <mat-horizontal-stepper [selectedIndex]="currentState" #stepper>
   <mat-step>
-    <ng-template matStepLabel >Ordered</ng-template>
+    <ng-template matStepLabel>{{"cockpit.orderStates.orderedH" | transloco}}</ng-template>
   </mat-step>
   <mat-step>
-    <ng-template matStepLabel>Preparation</ng-template>
+    <ng-template matStepLabel>{{"cockpit.orderStates.preparationH" | transloco}}</ng-template>
   </mat-step>
   <mat-step>
-    <ng-template matStepLabel>Delivery</ng-template>
+    <ng-template matStepLabel>{{"cockpit.orderStates.deliveryH" | transloco}}</ng-template>
   </mat-step>
   <mat-step>
-    <ng-template matStepLabel>Delivered</ng-template>
+    <ng-template matStepLabel>{{"cockpit.orderStates.deliveredH" | transloco}}</ng-template>
   </mat-step>
 </mat-horizontal-stepper>
 
